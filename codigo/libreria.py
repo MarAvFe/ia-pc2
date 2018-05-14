@@ -1,3 +1,6 @@
+
+from random import randint
+
 # ============================================== INDICACIONES GENERALES ===============================================
 # Este documento define las funciones requeridas para construir el programa.
 # Toda función de primer nivel, se debe documentar en este archivo y
@@ -24,6 +27,8 @@ ABAJO     =   'V'
 paso  = 0
 direcciones = [ IZQUIERDA, DERECHA, ABAJO, ARRIBA ]
 problema = []
+N = 15
+M = 20
 
 def crearArchivoSalida():
     # Crear el archivo de salida y retornar el puntero
@@ -89,6 +94,24 @@ class Individuo:
         self.tablero = tablero
         self.puntaje = puntaje
 
+    def __str__(self):
+        tb = "|Tablero:"
+        toPrt = "Puntaje: " + str(self.puntaje) + "\n"
+        toPrt += tb
+        unders = ""
+        while(len(tb)+len(unders) <= len(self.tablero[0])):
+            unders += "─"
+        unders += "|\n"
+        toPrt += unders
+        for i in self.tablero:
+            toPrt += "|"
+            for j in i:
+                toPrt += j
+            toPrt += "|\n"
+        toPrt += "└────────" + unders
+        return toPrt
+
+
 
 class Puntaje:
     # correcto dice si este acomodo conlleva a una solución
@@ -105,6 +128,12 @@ class Puntaje:
         # Puntuar si la función es una solución y la cantidad de pasos que toma
         # return int
         pass
+
+    def __str__(self):
+        toPrt = "Correcto: " + str(self.correcto)
+        toPrt += "\nPasos: " + str(self.pasos)
+        toPrt += "\nFlechas: " + str(self.flechas)
+        return toPrt
 
 
 def imprimirIndividuo(tablero, consecutivo):
@@ -152,6 +181,43 @@ def correrTableroAux(tablero, direccion):
     # return Puntaje(False, totalPasos)
     pass
 
+def obtenerPosicionConejo(tablero):
+    for i, fil in enumerate(tablero):
+        for j, col in enumerate(fil):
+            if( tablero[i][j] == 'C' ):
+                return (i, j)
+    print("DEBUG: Conejo no encontrado en:", tablero)
+    return (-1, -1)
+
+
+def darPaso(tablero, direccion):
+    global N
+    global M
+    def pasoValido(tablero, pos, direccion):
+        if ( (direccion == ARRIBA) and (pos[0] == 0) ):
+            return False
+        if ( (direccion == ABAJO) and (pos[0] == len(tablero)-1) ):
+            return False
+        if ( (direccion == DERECHA) and (pos[1] == len(tablero[0])-1) ):
+            return False
+        if ( (direccion == IZQUIERDA) and (pos[1] == 0) ):
+            return False
+        return True
+    pos = obtenerPosicionConejo(tablero)  # (x,y)
+    if( (not pasoValido(tablero, pos, direccion)) or (pos == (-1,-1))):
+        return []
+    tablero[pos[0]][pos[1]] = ' '
+    if (direccion == ARRIBA):
+        tablero[pos[0]-1][pos[1]] = 'C'
+    if (direccion == ABAJO):
+        tablero[pos[0]+1][pos[1]] = 'C'
+    if (direccion == DERECHA):
+        tablero[pos[0]][pos[1]+1] = 'C'
+    if (direccion == IZQUIERDA):
+        tablero[pos[0]][pos[1]-1] = 'C'
+    return tablero
+
+
 
 def funcionAjuste(individuo, direccion, consecutivo):
     # Verifica cuan correcta es una solucion
@@ -162,16 +228,27 @@ def funcionAjuste(individuo, direccion, consecutivo):
 
 
 def crearPoblacion(n):
-    # poblacion
-    # for i in range(n):
-    #     poblacion.append(individuoRandom())
-    # return poblacion
-    pass
+    poblacion = []
+    for i in range(n):
+        poblacion.append(individuoRandom())
+    return poblacion
 
 
 def individuoRandom():
-    # return Individuo(tableroRandom, -1)
-    pass
+    def piezaAleatoria():
+        v = randint(0,100)
+        return  (' '        if v > 4 else (
+                (ARRIBA     if v > 3 else (
+                (ABAJO      if v > 2 else (
+                (DERECHA    if v > 1 else
+                IZQUIERDA) )) )) ))
+    tablero = []
+    for fil in range(N):
+        fila = []
+        for col in range(M):
+            fila.append(piezaAleatoria())
+        tablero.append(fila)
+    return Individuo(tablero, -1)
 
 
 def obtenerIndividuoAleatorio(poblacion):
@@ -207,3 +284,8 @@ def buscarSolucion():
     #     break if ( GENERACION > 100 ) else None
     # return poblacion[0]
     pass
+
+
+# =====================================================================================================================
+# =========================================== Sección de Pruebas ======================================================
+# =====================================================================================================================
