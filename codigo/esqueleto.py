@@ -9,7 +9,6 @@
 
 # ===================================================== GLOSARIO ======================================================
 # Variables:
-#   - paso: variable global que lleva el consecutivo del paso que se está desarrollando
 #   - direcciones: arreglo con los posibles tókens de direcciones
 #   - poblacion: Una lista de individuos
 #   - problema: tablero con conejo y zanahorias leido de la entrada
@@ -50,8 +49,7 @@ def imprimirTablero(tablero):
     pass
 
 
-def obtenerNombreArchivo():
-    # global paso
+def obtenerNombreArchivo(paso):
     # nombre = '0000' + str(paso)
     # return nombre[-5]
     pass
@@ -71,6 +69,7 @@ def calcularCostoPasos():
     # return costos
     pass
 
+
 def calcularCosto(direccion):
     # De manera oscura calcular esta carajada. Es un heurístico
     # return costo
@@ -79,6 +78,9 @@ def calcularCosto(direccion):
 # =====================================================================================================================
 # =========================================== Algoritmo Genético ======================================================
 # =====================================================================================================================
+
+DIRECCION = ""
+GENERACION = 0
 
 class Individuo:
     # tablero solo tiene las flechas
@@ -105,6 +107,12 @@ class Puntaje:
         pass
 
 
+def imprimirIndividuo(tablero, consecutivo):
+    # Imprimir tablero
+    # name = "./output/" + DIRECCION + "/" + GENERACION + "/" + obtenerNombreArchivo(consecutivo) + ".txt"
+    pass
+
+
 def obtenerEstadoTablero(tablero):
     # Cuenta la cantidad de zanahorias en el tablero
     pass
@@ -122,15 +130,12 @@ def mezclarTableroConDirecciones(tablero, direcciones):
     pass
 
 
-def correrTablero(tablero):
-    # global direcciones
+def correrTablero(tablero, direccion, consecutivo):
     # recibe un tablero con direcciones y lo ejecuta
     # flechas = contarFlechas(tablero)
     # tablero = mezclarTableroConDirecciones(tablero, problema)
-    # soluciones = []
-    # for direccion in direcciones:
-    #     soluciones.append( correrTableroAux(tablero, direccion) )
-    # resultado = min(soluciones)
+    # imprimirIndividuo(tablero, consecutivo)
+    # resultado = correrTableroAux(tablero, direccion)
     # resultado.flechas = flechas
     # return resultado
     pass
@@ -148,9 +153,9 @@ def correrTableroAux(tablero, direccion):
     pass
 
 
-def funcionAjuste(individuo):
+def funcionAjuste(individuo, direccion, consecutivo):
     # Verifica cuan correcta es una solucion
-    # rubros = correrTablero(individuo.tablero)
+    # rubros = correrTablero(individuo.tablero, direccion, consecutivo)
     # individuo.puntaje = rubros.obtenerPuntaje()
     # return individuo
     pass
@@ -181,13 +186,14 @@ def buscarSolucion():
     # Retorna al individuo más apto
     # --- Crear población inicial ---
     # poblacion = crearPoblacion(n)
-    # generaciones = 0
+    # global DIRECCION
+    # global GENERACION
     #
     # while(poblacion[0].puntaje < 100):  # Por definir segun la funcion de puntaje
     #     --- Puntuar individuos ---
     #     poblacionPuntuada = []
     #     for individuo in poblacion:
-    #         poblacionPuntuada.append( funcionAjuste(individuo) )
+    #         poblacionPuntuada.append( funcionAjuste(individuo, DIRECCION, poblacion.indexOf(individuo)) )
     #     poblacion = ordenarPuntuados(poblacionPuntuada)  # Puntajes más altos de primero
     #
     #     --- Reproducción y selección ---
@@ -196,8 +202,8 @@ def buscarSolucion():
     #         padre1, padre2 = obtenerIndividuoAleatorio(poblacion)
     #         nuevaGeneracion.append( cruce( padre1, padre2 ) )
     #     poblacion = nuevaGeneracion
-    #     generaciones += 1
-    #     print("Generacion:", generaciones) if ( generaciones % 10 == 0 ) else None
-    #     break if ( generaciones > 100 ) else None
+    #     GENERACION += 1
+    #     print("Generacion:", GENERACION) if ( GENERACION % 10 == 0 ) else None
+    #     break if ( GENERACION > 100 ) else None
     # return poblacion[0]
     pass
