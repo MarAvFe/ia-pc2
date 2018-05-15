@@ -1,6 +1,5 @@
 from libreria import *
 
-
 def test_crearPoblacion():
     pob = crearPoblacion(5)
     # print(pob)
@@ -65,6 +64,21 @@ def test_darPaso():
     assert darPaso(unbunnied, DERECHA) == []
 
 
+def test_ordenarPuntuados():
+    poblacion = crearPoblacion(50)
+    for i in poblacion:
+        i.puntaje = gauss(30,30)
+    #    print(i.tablero)
+    #print("---")
+    poblacion = ordenarPuntuados(poblacion)
+    #for i in poblacion:
+    #    print(i.puntaje)
+    assert poblacion[0].puntaje > poblacion[1].puntaje
+    assert poblacion[0].puntaje > poblacion[2].puntaje
+    assert poblacion[0].puntaje > poblacion[-1].puntaje
+    assert poblacion[-2].puntaje > poblacion[-1].puntaje
+
+
 def test_crearArchivoSalida():
     # assert crearArchivoSalida() == True
     pass
@@ -116,22 +130,117 @@ def test_obtenerEstadoTablero():
 
 
 def test_contarFlechas():
-    # assert contarFlechas(tablero) == True
+    tablero5Flechas = [
+        [' ','A',' ',' '],
+        [' ','A',' ',' '],
+        [' ',' ','>',' '],
+        [' ',' ',' ',' '],
+        ['<',' ',' ','V'],
+        [' ',' ',' ',' ']
+    ]
+    tablero2Flechas = [
+        [' ',' ',' ',' '],
+        [' ',' ',' ',' '],
+        [' ',' ',' ',' '],
+        [' ',' ',' ',' '],
+        ['<',' ',' ','V'],
+        [' ',' ',' ',' ']
+    ]
+    assert contarFlechas(tablero5Flechas) == 5
+    assert contarFlechas(tablero2Flechas) == 2
     pass
 
 
 def test_mezclarTableroConDirecciones():
-    # assert mezclarTableroConDirecciones(tablero, direcciones) == True
-    pass
+    tablero = [
+        [' ',' ','C',' '],
+        [' ',' ',' ',' '],
+        [' ',' ',' ','Z'],
+        ['Z',' ',' ',' '],
+        [' ',' ',' ',' '],
+        ['Z',' ',' ',' ']
+    ]
+    tableroConChoque = [
+        [' ','C',' ',' '],
+        [' ',' ',' ',' '],
+        [' ',' ',' ','Z'],
+        ['Z',' ',' ',' '],
+        [' ',' ',' ',' '],
+        ['Z',' ',' ',' ']
+    ]
+    direcciones = [
+        [' ','A',' ',' '],
+        [' ','A',' ',' '],
+        [' ',' ','>',' '],
+        [' ',' ',' ',' '],
+        ['<',' ',' ','V'],
+        [' ',' ',' ',' ']
+    ]
+    assert mezclarTableroConDirecciones(tablero, direcciones) == [
+        [' ','A','C',' '],
+        [' ','A',' ',' '],
+        [' ',' ','>','Z'],
+        ['Z',' ',' ',' '],
+        ['<',' ',' ','V'],
+        ['Z',' ',' ',' ']
+    ]
+    assert mezclarTableroConDirecciones(tableroConChoque, direcciones) == []
+
+
+def test_obtenerNuevaDireccion():
+    global IZQUIERDA
+    global ARRIBA
+    global DERECHA
+    global ABAJO
+    tab1 = [
+        [' ','A','C',' '],
+        [' ','A',' ',' '],
+        [' ',' ','>','Z'],
+        ['Z',' ',' ',' '],
+        ['<',' ',' ','V'],
+        ['Z',' ',' ',' ']
+    ]
+    tab2 = [
+        [' ','A','C',' '],
+        [' ','A',' ',' '],
+        [' ',' ','>','Z'],
+        ['Z',' ',' ',' '],
+        ['<',' ',' ','V'],
+        ['Z',' ',' ',' ']
+    ]
+    tab3 = [
+        [' ','A',' ',' '],
+        [' ','A','C',' '],
+        [' ',' ','>','Z'],
+        ['Z',' ',' ',' '],
+        ['<',' ',' ','V'],
+        ['Z',' ',' ',' ']
+    ]
+    assert obtenerNuevaDireccion(tab1, IZQUIERDA) == ARRIBA
+    assert obtenerNuevaDireccion(tab2, DERECHA) == DERECHA
+    assert obtenerNuevaDireccion(tab3, ABAJO) == DERECHA
 
 
 def test_correrTablero():
-    # assert correrTablero(tablero, direccion, consecutivo) == True
-    pass
-
-
-def test_correrTableroAux():
-    # assert correrTableroAux(tablero, direccion) == True
+    global ABAJO
+    global problema
+    problema = [
+        [' ',' ','C',' '],
+        [' ',' ',' ',' '],
+        [' ','Z',' ','Z'],
+        ['Z',' ',' ',' '],
+        [' ',' ',' ',' '],
+        ['Z',' ',' ',' ']
+    ]
+    tablero = [
+        [' ','A',' ',' '],
+        [' ','A',' ',' '],
+        ['V',' ','<',' '],
+        [' ',' ',' ',' '],
+        ['>',' ',' ','V'],
+        [' ',' ',' ',' ']
+    ]
+    correrTablero(tablero, ABAJO, 1)
     pass
 
 
@@ -139,8 +248,8 @@ def test_funcionAjuste():
     # assert funcionAjuste(individuo, direccion, consecutivo) == True
     pass
 
-def test_obtenerIndividuoAleatorio():
-    # assert obtenerIndividuoAleatorio(poblacion) == True
+def test_obtenerIndividuosAleatorios():
+    assert len(obtenerIndividuosAleatorios(crearPoblacion(5))) == 2
     pass
 
 
@@ -165,7 +274,8 @@ test_obtenerEstadoTablero()
 test_contarFlechas()
 test_mezclarTableroConDirecciones()
 test_correrTablero()
-test_correrTableroAux()
 test_funcionAjuste()
-test_obtenerIndividuoAleatorio()
+test_obtenerIndividuosAleatorios()
 test_buscarSolucion()
+test_ordenarPuntuados()
+test_obtenerNuevaDireccion()
