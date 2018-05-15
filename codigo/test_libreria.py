@@ -1,5 +1,23 @@
 from libreria import *
 
+
+# =====================================================================================================================
+# ============================================== Algoritmo A* =========================================================
+# =====================================================================================================================
+
+def test_calcularCostoPasos():
+    # assert calcularCostoPasos() == True
+    pass
+
+
+def test_calcularCosto():
+    # assert calcularCosto(direccion) == True
+    pass
+
+# =====================================================================================================================
+# =========================================== Algoritmo Genético ======================================================
+# =====================================================================================================================
+
 def test_crearPoblacion():
     pob = crearPoblacion(5)
     # print(pob)
@@ -94,11 +112,6 @@ def test_cerrarArchivoSalida():
     pass
 
 
-def test_imprimirTablero():
-    # assert imprimirTablero(tablero) == True
-    pass
-
-
 def test_obtenerNombreArchivo():
     # assert obtenerNombreArchivo(paso) == True
     pass
@@ -106,16 +119,6 @@ def test_obtenerNombreArchivo():
 
 def test_leerProblema():
     # assert leerProblema(nombre) == True
-    pass
-
-
-def test_calcularCostoPasos():
-    # assert calcularCostoPasos() == True
-    pass
-
-
-def test_calcularCosto():
-    # assert calcularCosto(direccion) == True
     pass
 
 
@@ -230,18 +233,29 @@ def test_correrTablero():
         [' ','Z',' ','Z'],
         ['Z',' ',' ',' '],
         [' ',' ',' ',' '],
-        ['Z',' ',' ',' ']
+        [' ',' ',' ',' ']
     ]
     tablero = [
         [' ','A',' ',' '],
         [' ','A',' ',' '],
         ['V',' ','<',' '],
         [' ',' ',' ',' '],
-        ['>',' ',' ','V'],
+        ['>',' ',' ','A'],
         [' ',' ',' ',' ']
     ]
-    correrTablero(tablero, ABAJO, 1)
-    pass
+    res = correrTablero(tablero, ABAJO, 1)
+    assert type(res[0]) == Puntaje
+    assert type(res[0].obtenerPuntaje()) == int
+    assert type(res[1]) == list
+    assert type(res[1][0]) == list
+    assert res[1] == [
+        [' ','A',' ',' '],
+        [' ','A',' ',' '],
+        [' ',' ',' ','C'],
+        [' ',' ',' ',' '],
+        [' ',' ',' ',' '],
+        [' ',' ',' ',' ']
+    ]
 
 
 def test_funcionAjuste():

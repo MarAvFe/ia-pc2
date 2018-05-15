@@ -123,6 +123,8 @@ class Puntaje:
 
 
 def imprimirTablero(tablero):
+    if (len(tablero) == 0):
+        return "┌Tablero:─┐\n└─────────┘"
     tb = "┌Tablero:"
     toPrt = tb
     unders = ""
@@ -207,17 +209,13 @@ def correrTablero(tablero, direccion, consecutivo):
     global problema
     # recibe un tablero con una dirección y lo ejecuta
     flechas = contarFlechas(tablero)
-    print(problema)
-    print(flechas)
-    print(tablero)
     tablero = mezclarTableroConDirecciones(tablero, problema)
-    print(tablero)
     if (tablero == []):
-        return Puntaje(False,-1)
+        return Puntaje(False,-1), []
     # imprimirIndividuo(tablero, consecutivo)
-    resultado = correrTableroAux(tablero, direccion)
+    resultado, tablero = correrTableroAux(tablero, direccion)
     resultado.flechas = flechas
-    return resultado
+    return resultado, tablero
 
 
 
@@ -225,13 +223,14 @@ def correrTableroAux(tablero, direccion):
     direccionActual = direccion
     totalPasos = 0
     while(isConejoVivo(tablero)):
+        #print("paso",imprimirTablero(tablero))
         if (obtenerEstadoTablero(tablero) == 0):
-            return Puntaje(True, totalPasos)
+            return Puntaje(True, totalPasos), tablero
         nuevaDireccion = obtenerNuevaDireccion(tablero, direccionActual)
         tablero = darPaso(tablero, direccionActual)
         direccionActual = nuevaDireccion
         totalPasos += 1
-    return Puntaje(False, totalPasos)
+    return Puntaje(False, totalPasos), tablero
 
 
 def obtenerPosicionConejo(tablero):
@@ -273,8 +272,9 @@ def darPaso(tablero, direccion):
 
 def funcionAjuste(individuo, direccion, consecutivo):
     # Verifica cuan correcta es una solucion
-    rubros = correrTablero(individuo.tablero, direccion, consecutivo)
-    individuo.puntaje = rubros.obtenerPuntaje()
+    res = correrTablero(individuo.tablero, direccion, consecutivo)
+    individuo.puntaje = res[0].obtenerPuntaje()
+    individuo.tablero = res[1]
     return individuo
 
 
@@ -374,5 +374,31 @@ tablero = [
     ['>',' ',' ','A'],
     [' ',' ',' ',' ']
 ]
+tablero2 = [
+    [' ','A',' ',' '],
+    [' ','A',' ',' '],
+    ['V',' ','<',' '],
+    [' ',' ',' ',' '],
+    ['>',' ',' ','A'],
+    [' ',' ',' ',' ']
+]
+tablero3 = [
+    [' ','A',' ',' '],
+    [' ','A',' ',' '],
+    ['V',' ','<',' '],
+    [' ',' ',' ',' '],
+    ['>',' ',' ','A'],
+    [' ',' ',' ',' ']
+]
+tablero4 = [
+    [' ','A',' ',' '],
+    [' ','A',' ',' '],
+    ['V',' ','<',' '],
+    [' ',' ',' ',' '],
+    ['>',' ',' ','A'],
+    [' ',' ',' ',' ']
+]
 print("cota",correrTablero(tablero, ABAJO, 1))
-print(funcionAjuste(Individuo(tablero,-1), ABAJO, 53))
+print(funcionAjuste(Individuo(tablero2,-1), ABAJO, 53))
+print(funcionAjuste(Individuo(tablero3,-1), DERECHA, 53))
+print(funcionAjuste(Individuo(tablero4,-1), IZQUIERDA, 53))
