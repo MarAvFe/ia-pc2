@@ -14,19 +14,30 @@ def encontrarConejo(tablero):
 				return (x,y)
 	return (-1,-1)
 
+def guardarArchivo(tablero, nombre):
+	with open(nombre+".txt", 'w') as archivo:
+		for y in range(len(tablero)):
+			lTmp=""
+			for x in range(len(tablero[y])):
+				if tablero[y][x] == "":
+					lTmp+="·"
+				else:
+					lTmp+=str(tablero[y][x])
+			lTmp+="\n"
+			archivo.write(lTmp)
+
 def movimiento(posicionConejo, movimientoGanador, tablero):
 	f, c = posicionConejo
 	tablero[f][c] = ""
 	comioZanahoria = False
 	if movimientoGanador == "IZQUIERDA":
 		c-=1
-	else if movimientoGanador == "DERECHA":
+	elif movimientoGanador == "DERECHA":
 		c+=1
-	else if movimientoGanador == "ARRIBA":
+	elif movimientoGanador == "ARRIBA":
 		f-=1
-	else if movimientoGanador == "ABAJO":
+	elif movimientoGanador == "ABAJO":
 		f+=1
-
 	if (tablero[f][c]=="Z"):
 		comioZanahoria = True
 	tablero[f][c] = "C"
@@ -45,7 +56,7 @@ def calcularMejorMovimiento(posicionConejo, tableroVisible, posicionAnterior, ta
 		f_r, c_r = random.choice(coordenadas)
 		while (f_r== f_p and c_r ==c_p):
 			f_r, c_r = random.choice(coordenadas)
-
+#imprimir los costos para cada movimiento
 	else:
 		# Calcular costos de cada movimiento
 		mejorMovimiento, costoMovimiento, movimientos = calcularCostoTotal(posicionConejo, tableroVisible)
@@ -57,6 +68,7 @@ def calcularMejorMovimiento(posicionConejo, tableroVisible, posicionAnterior, ta
 
 
 def calcularCostoTotal(posicionConejo, tableroVisible):
+# Falta poner la restricción que se muevasolo si existe el casillero en la tabla
 	f,c = posicionConejo
 	movimientos = ["IZQUIERDA", "DERECHA", "ARRIBA", "ABAJO"]
 	costoMovimiento=[]
@@ -69,6 +81,7 @@ def calcularCostoTotal(posicionConejo, tableroVisible):
 		costoMovimiento.append(calcularHeuristico((f,c) + calcularCosto((f,c))))
 	valorMayor=0
 	indice=0
+# FALTA que si es un empate de costos menores, seleccionar el movimiento aleatoriamenet
 	for i in range(len(costoMovimiento)):
 		if (valorMayor < i):
 			valorMayor = costoMovimiento[i]
@@ -151,6 +164,7 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 		['','','','','','','Z']
 	]	
 	zanahoriasComidas = 0
+	costoAcumulado = 0
 	#costoRegular = 1.0
 	paso = 0
 	print("--- Tablero inicial ---")
@@ -165,6 +179,7 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 	if ((cantidadInicialZanahorias < zanahoriasPorComer) or (posicionConejo[0]==-1 and posicionConejo[1]==-1)):
 		print ("Error al ingresar los parámetros")
 	else:
+		guardarArchivo(tablero, str(paso).zfill(5))
 		while(zanahoriasPorComer != zanahoraisComidas):
 			paso+=1
 			# Busca los espacios visibles
