@@ -36,20 +36,7 @@ def leerTableroInicial(nombreArchivo):
 	return tablero
 
 
-# Guarda en un archivo de texto el tablero después de dar un paso
-def guardarArchivoOriginalBORRAR(tablero, nombre):
-	if not os.path.exists("resultados"):
-		os.makedirs("resultados")
-	with open("resultados/"+nombre+".txt", 'w') as archivo:
-		for y in range(len(tablero)):
-			lTmp=""
-			for x in range(len(tablero[y])):
-				if tablero[y][x] == "":
-					lTmp+="·"
-				else:
-					lTmp+=str(tablero[y][x])
-			lTmp+="\n"
-			archivo.write(lTmp)
+
 
 # Guarda en un archivo de texto el tablero después de dar un paso
 def guardarArchivo(tablero, nombre):
@@ -90,36 +77,6 @@ def moverConejoTablero(posicionConejo, movimientoGanador, tablero):
 	# Devuelve: nueva coordenada del conejo, si comió una zanahoria, 
 	return comioZanahoria, tablero
 
-#def moverConejo(tablero, posicionConejo, nuevaPosicion):
-#	f_c, c_c = posicionConejo
-#	f_n, c_n = nuevaPosicion
-#	tablero [x_c][y_c]=""
-#	tablero [x_n][y_n]="C"
-#	return tablero
-
-# Según el g y el h, devuelve el mejor movimiento.
-def calcularMejorMovimiento(posicionConejo, tableroVisible, posicionAnterior, tablero):
-	f,c = posicionConejo
-	f_p, c_p = posicionAnterior
-	movimientos = ["IZQUIERDA", "DERECHA", "ARRIBA", "ABAJO"]
-	costoMovimiento=[]
-	coordenadas =[(0,-1),(0,1),(-1,0),(1,0)]
-	# Revisa si hay zanahorias
-	if (cantidadZanahoriasTablero(tableroVisible)==0):
-		# Mover aleatoriamente al conejo, pero que no vuelva a la posicion anterior
-		f_r, c_r = random.choice(coordenadas)
-		while (f_r== f_p and c_r ==c_p):
-			f_r, c_r = random.choice(coordenadas)
-#imprimir los costos para cada movimiento
-	else:
-		# Calcular costos de cada movimiento
-		mejorMovimiento, costoMovimiento, movimientos = calcularCostoTotal(posicionConejo, tableroVisible)
-
-		# Mover conejo
-		
-		posicionConejo, comioZanahoria, posicionAnterior = movimiento(posicionConejo, movimientoGanador, tablero)
-	return mejorMovimiento
-
 def getMejorMovimiento(listaF):
 	movimientos = ["IZQUIERDA", "DERECHA", "ARRIBA", "ABAJO"]
 	indice = 0
@@ -132,35 +89,6 @@ def imprimirCostosDeCadaMovimiento(paso, costoPorMovimiento, movimientoGanador):
 										" ABAJO: "+ str(costoPorMovimiento[3])  + 
 										" MOVIMIENTO: "+ str( movimientoGanador))
 	#PASO: 00001 IZQUIERDA: 5 DERECHA: 3 ARRIBA: 8 ABAJO: 9 MOVIMIENTO: DERECHA
-
-
-
-def calcularCostoTotal(posicionConejo, tableroVisible):
-# Falta poner la restricción que se muevasolo si existe el casillero en la tabla
-	f,c = posicionConejo
-	movimientos = ["IZQUIERDA", "DERECHA", "ARRIBA", "ABAJO"]
-	costoMovimiento=[]
-	coordenadas =[(0,-1),(0,1),(-1,0),(1,0)]
-	f,c = posicionConejo
-	for i in range(len(coordenadas)):
-		c_f,c_c = i
-		f+=c_f
-		c+=c_c
-		costoMovimiento.append(calcularHeuristico((f,c) + calcularCosto((f,c))))
-	valorMayor=0
-	indice=0
-# FALTA que si es un empate de costos menores, seleccionar el movimiento aleatoriamenet
-	for i in range(len(costoMovimiento)):
-		if (valorMayor < i):
-			valorMayor = costoMovimiento[i]
-			indice = i
-	# Imprimir costo de cada coordenada
-	# 
-
-	return movimientos[indice], costoMovimiento, movimientos
-
-
-
 
 def getTableroVisible(tablero, rangoVision, posicionConejo):
 	tableroVisible = []
@@ -207,16 +135,6 @@ def getTableroVisible(tablero, rangoVision, posicionConejo):
 
 	print("posicionConejoVisible_x: "+ str(x_ConejoVisible)+", posicionConejoVisible_y: "+ str(y_ConejoVisible))
 	return (x_ConejoVisible,y_ConejoVisible), tableroVisible,  izquierda, derecha, arriba, abajo
-
-def imprimirTableroOriginal(tablero):
-	for f in range(len(tablero)):
-		tmp=""
-		for c in range(len(tablero[f])):
-			if (tablero[f][c]==""):
-				tmp+="·"
-			else:
-				tmp+=tablero[f][c]
-		print(tmp)
 
 def imprimirTablero(tablero):
 	for f in range(len(tablero)):
@@ -272,7 +190,6 @@ def penalizarAnterior(eAnterior, eActual):
 	_d, _n = movimiento
 	return _n
 
-
 def movimiento(x,y):
 	if (x == 0 and y == -1): # Izquierda
 		return "IZQUIERDA", 0
@@ -283,6 +200,7 @@ def movimiento(x,y):
 	elif(x == 1 and y == 0): # Abajo
 		return "ABAJO", 1		
 
+# total de zanahorias - zanahorias encontradas en la sección. Penaliza si en la sección no hay suficientes zanahorias juntas.
 def grupoZanahorias(tablero, v, zanahorias):
 	totalZanahorias = len(zanahorias)
 	conta = 0
@@ -359,22 +277,23 @@ def grupoZanahorias(tablero, v, zanahorias):
 	return pesos
 
 def penalidadPared(paredIzq,paredDer, paredArr, paredAba):
+	peso = 15
 	print(">>>>>>>>>>>>>>>>>> penalidad por chocar con pared <<<<<<<<<<<<<<<<< ")
 	penalidades = []
 	if (paredIzq==True):
-		penalidades.append(15)
+		penalidades.append(peso)
 	else:
 		penalidades.append(0)
 	if (paredDer==True):
-		penalidades.append(15)
+		penalidades.append(peso)
 	else:
 		penalidades.append(0)	
 	if (paredArr==True):
-		penalidades.append(15)
+		penalidades.append(peso)
 	else:
 		penalidades.append(0)	
 	if (paredAba==True):
-		penalidades.append(15)
+		penalidades.append(peso)
 	else:
 		penalidades.append(0)	
 	return penalidades
@@ -393,9 +312,8 @@ def penalizarEstadoAnterior(ultimoMovimientoGanador, vecinos):
 	return penalizacion
 
 
-
-
-def main(rangoVision = 1, zanahoriasPorComer = 3):
+def main(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial="tableroInicial.txt"):
+	borrarResultadosPrevios()
 	abierta = []
 	cerrada = []
 	f = [0,0,0,0]
@@ -410,7 +328,7 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 	borrarResultadosPrevios() # Borra carpeta que contiene resultados de la corrida anterior
 	paso = 0
 	print("********** Tablero inicial **********")
-	tablero = leerTableroInicial("tableroInicial.txt")	
+	tablero = leerTableroInicial(nombreTableroInicial)	
 	imprimirTablero(tablero)
 	posicionConejo = encontrarConejo(tablero)
 	cantidadInicialZanahorias = cantidadZanahoriasTablero (tablero)
@@ -420,7 +338,6 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 	if ((cantidadInicialZanahorias < zanahoriasPorComer) or (posicionConejo[0]==-1 and posicionConejo[1]==-1)):
 		print ("Error al ingresar los parámetros")
 	else:
-		#guardarArchivo(tablero, str(paso).zfill(5))
 		while(zanahoriasPorComer != zanahoriasComidas):
 			lH = [0,0,0,0]
 			paso+=1
@@ -435,11 +352,13 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 			coordenadasZanahorias = encontrarZanahorias(tableroVisible) # Obtiene las coordenadas de las zanahorias
 
 			# Penalizar para que no regrese a posición a la posición de donde viene
-			if (ultimoMovimientoGanador!=""):
-				p0 = penalizarEstadoAnterior(ultimoMovimientoGanador, vecinos)
-				print("PENALIDAD ESTADO ANTERIOR "+"IZQUIERDA: " + str(p0[0])+ "DERECHA: " + 
-				str(p0[1]) +"ARRIBA: " + str(p0[2])+"ABAJO: " + str(p0[3]))
-				lH = [x + y for x, y in zip(lH, p0)]
+# **** NO BORRAR			
+#			if (ultimoMovimientoGanador!=""):
+#				p0 = penalizarEstadoAnterior(ultimoMovimientoGanador, vecinos)
+#				print("PENALIDAD ESTADO ANTERIOR "+"IZQUIERDA: " + str(p0[0])+ "DERECHA: " + 
+#				str(p0[1]) +"ARRIBA: " + str(p0[2])+"ABAJO: " + str(p0[3]))
+#				lH = [x + y for x, y in zip(lH, p0)]
+# **** FIN DE NO BORRAR
 
 			# Penalizar para que no choque con la pared
 			p3 = penalidadPared(paredIzq,paredDer, paredArr, paredAba) #falta revisar
@@ -468,8 +387,6 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 				f = [x + y for x, y in zip(lH, lG)]
 				print("F:  "+"IZQUIERDA: " + str(f[0])+ ", DERECHA: " + 
 				str(f[1]) +", ARRIBA: " + str(f[2])+", ABAJO: " + str(f[3]))		
-				
-
 				mejorMovimiento = getMejorMovimiento(f)
 				ultimoMovimientoGanador=mejorMovimiento
 				# Imprimir todos los costos y mejro movimiento
@@ -484,7 +401,6 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 				if (comioZanahoria== True):
 					zanahoriasComidas+=1
 
-
 			# No hay zanahorias en el tablero visible	
 			else:
 				print("**************** NO HAY ZANAHORIAS VISIBLES, SE HACE UN MOVIMIENTO ALEATORIO ***************************")
@@ -495,7 +411,6 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 				mejorMovimiento = getMejorMovimiento(f)
 				ultimoMovimientoGanador=mejorMovimiento				
 				comioZanahoria, tablero = moverConejoTablero(encontrarConejo(tablero), mejorMovimiento, tablero)
-
 				# No se ven zanahorias en el tablero. Movimiento aleatorio, pero no regresar a la posición anterior
 
 			g+=1
