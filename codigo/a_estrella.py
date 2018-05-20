@@ -312,7 +312,7 @@ def penalizarEstadoAnterior(ultimoMovimientoGanador, vecinos):
 	return penalizacion
 
 
-def main(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial="tableroInicial.txt"):
+def main_function(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial="tableroInicial.txt"):
 	borrarResultadosPrevios()
 	abierta = []
 	cerrada = []
@@ -424,4 +424,4 @@ def main(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial="tableroI
 	print("PASO: "+ str(paso).zfill(5) + " FINAL")
 
 
-main(2, 2)
+main_function(2, 2)

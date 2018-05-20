@@ -1,13 +1,6 @@
+import sys
 import argparse
-from aEstrella import *
-
-
-
-
-
-
-
-
+import a_estrella as ae
 
 
 def usage():
@@ -52,7 +45,9 @@ def main():
             print("Vision de:")
             print(args.vision[0])
             print("Zanahorias:")
-            print(args.zanahorias[0])        
+            print(args.zanahorias[0])
+            ##Llama la funcion de a estrella
+            ae.main_function(arg.vision[0],args.zanahorias[0])
 
     elif args.genetico:
         if(args.individuos==None or args.generaciones==None):
@@ -75,13 +70,13 @@ def main():
             print(args.individuos[0])
             print("Generaciones:")
             print(args.generaciones[0])  
-
     else:
         print("Error en los comandos, agregue --a-estrella o --geneticos")
+
+    
         
 
-
-
 main()
+
     
     
