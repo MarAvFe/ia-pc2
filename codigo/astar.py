@@ -1,4 +1,22 @@
 import random
+import shutil
+import os
+
+class Estado(object):
+	g = 0
+	h = 0
+	f = 0
+
+	def __init__(self, g, h, f):
+		self.g = g
+		self.h = h
+		self.f = f
+
+def getEstado(g, h, f):
+	estado = Estado(g, h, f)
+	return estado
+
+# Busca y encuentra las coordenadas de todas las zanahorias en el tablero visible
 def encontrarZanahorias(tablero):
 	posicionZanahorias=[]
 	for y in range(len(tablero)):
@@ -7,6 +25,7 @@ def encontrarZanahorias(tablero):
 				posicionZanahoriasappend([x, y])	
 	return posicionZanahorias
 
+# Encuentra las coordenadas del conejo
 def encontrarConejo(tablero):
 	for y in range(len(tablero)):
 		for x in range(len(tablero[y])):
@@ -14,8 +33,27 @@ def encontrarConejo(tablero):
 				return (x,y)
 	return (-1,-1)
 
-def guardarArchivo(tablero, nombre):
-	with open(nombre+".txt", 'w') as archivo:
+# Leer tablero inicial
+def leerTableroInicial(nombreArchivo):
+	tablero = []
+	with open(nombreArchivo) as archivo:
+		for fila in archivo.readlines():
+			tmp = []
+			for columna in fila[:-1]:
+				if (columna!=","):
+					if (columna == "Z" or columna =="C" or columna ==" " ):
+						tmp.append(columna)
+					else:
+						break
+			tablero.append(tmp)
+	return tablero
+
+
+# Guarda en un archivo de texto el tablero después de dar un paso
+def guardarArchivoOriginalBORRAR(tablero, nombre):
+	if not os.path.exists("resultados"):
+		os.makedirs("resultados")
+	with open("resultados/"+nombre+".txt", 'w') as archivo:
 		for y in range(len(tablero)):
 			lTmp=""
 			for x in range(len(tablero[y])):
@@ -26,9 +64,27 @@ def guardarArchivo(tablero, nombre):
 			lTmp+="\n"
 			archivo.write(lTmp)
 
+# Guarda en un archivo de texto el tablero después de dar un paso
+def guardarArchivo(tablero, nombre):
+	if not os.path.exists("resultados"):
+		os.makedirs("resultados")
+	with open("resultados/"+nombre+".txt", 'w') as archivo:
+		for y in range(len(tablero)):
+			lTmp=""
+			for x in range(len(tablero[y])):
+				if tablero[y][x] == " ":
+					lTmp+=" "
+				else:
+					lTmp+=str(tablero[y][x])
+				lTmp+=","
+			lTmp=lTmp[:-1]
+			lTmp+="\n"
+			archivo.write(lTmp)
+
+# Mueve al conejo al conejo en el tablero según el resultado ganador
 def movimiento(posicionConejo, movimientoGanador, tablero):
 	f, c = posicionConejo
-	tablero[f][c] = ""
+	tablero[f][c] = "" # Elimina al conejo de la posición en la que se encontraba
 	comioZanahoria = False
 	if movimientoGanador == "IZQUIERDA":
 		c-=1
@@ -38,12 +94,22 @@ def movimiento(posicionConejo, movimientoGanador, tablero):
 		f-=1
 	elif movimientoGanador == "ABAJO":
 		f+=1
+	# Revisa si comió una zanahoria
 	if (tablero[f][c]=="Z"):
 		comioZanahoria = True
+	# Coloca al conejo en la posición nueva.
 	tablero[f][c] = "C"
+	# Devuelve: nueva coordenada del conejo, si comió una zanahoria, 
 	return (f,c), comioZanahoria, posicionConejo
 
+#def moverConejo(tablero, posicionConejo, nuevaPosicion):
+#	f_c, c_c = posicionConejo
+#	f_n, c_n = nuevaPosicion
+#	tablero [x_c][y_c]=""
+#	tablero [x_n][y_n]="C"
+#	return tablero
 
+# Según el g y el h, devuelve el mejor movimiento.
 def calcularMejorMovimiento(posicionConejo, tableroVisible, posicionAnterior, tablero):
 	f,c = posicionConejo
 	f_p, c_p = posicionAnterior
@@ -65,6 +131,16 @@ def calcularMejorMovimiento(posicionConejo, tableroVisible, posicionAnterior, ta
 		
 		posicionConejo, comioZanahoria, posicionAnterior = movimiento(posicionConejo, movimientoGanador, tablero)
 	return mejorMovimiento
+
+
+def imprimirCostosDeCadaMovimiento(paso, costoPorMovimiento, movimientoGanador):
+	print("PASO: "+ str(paso).zfill(5) + " IZQUIERDA: "+ costoPorMovimiento[0] +
+										" DERECHA: " + costoPorMovimiento[1] +
+										" ARRIBA: " + costoPorMovimiento[2] +
+										" ABAJO: "+ costoPorMovimiento[3]  + 
+										" MOVIMIENTO: "+ movimientoGanador)
+	#PASO: 00001 IZQUIERDA: 5 DERECHA: 3 ARRIBA: 8 ABAJO: 9 MOVIMIENTO: DERECHA
+
 
 
 def calcularCostoTotal(posicionConejo, tableroVisible):
@@ -98,17 +174,12 @@ def calcularHeuristico():
 
 def encontrarZanahoria():
 	pass
+
 def calcularCosto():
 	# Espacio vacío = 0
 	# Zanahoria = 1
 	pass
 
-def moverConejo(tablero, posicionConejo, nuevaPosicion):
-	f_c, c_c = posicionConejo
-	f_n, c_n = nuevaPosicion
-	tablero [x_c][y_c]=""
-	tablero [x_n][y_n]="C"
-	return tablero
 
 def getTableroVisible(tablero, rangoVision, posicionConejo):
 	tableroVisible = []
@@ -133,7 +204,7 @@ def getTableroVisible(tablero, rangoVision, posicionConejo):
 		tableroVisible.append(lTemp)
 	return tableroVisible
 
-def imprimirTablero(tablero):
+def imprimirTableroOriginal(tablero):
 	for f in range(len(tablero)):
 		tmp=""
 		for c in range(len(tablero[f])):
@@ -143,6 +214,18 @@ def imprimirTablero(tablero):
 				tmp+=tablero[f][c]
 		print(tmp)
 
+def imprimirTablero(tablero):
+	for f in range(len(tablero)):
+		tmp=""
+		for c in range(len(tablero[f])):
+			if (tablero[f][c]==" "):
+				tmp+="·"
+			else:
+				tmp+=tablero[f][c]
+		print(tmp)
+
+def borrarResultadosPrevios():
+	shutil.rmtree("resultados", ignore_errors=True)
 
 def cantidadZanahoriasTablero(tablero):
 	totalZanahorias = 0
@@ -152,39 +235,47 @@ def cantidadZanahoriasTablero(tablero):
 				totalZanahorias+=1	
 	return totalZanahorias
 
+def getVecinos(posicionConejo, tablero):
+	listaVecinos = []
+	costoMovimiento=[]
+	coordenadas =[(0,-1),(0,1),(-1,0),(1,0)]
+	numeroFilas = len(tablero)-1
+	numeroColumnas = len(tablero[0])-1
+	x, y = posicionConejo
+	for i in coordenadas:
+		_x = x + i[0]
+		_y = y + i[1]
+		if (_x>=0 and _y >= 0 and _x <= numeroFilas and _y <= numeroColumnas):
+			listaVecinos.append[_x, _y]
+	return listaVecinos
+
 def main(rangoVision = 1, zanahoriasPorComer = 3):
-	tablero = [
-		['','','','','','',''],
-		['','Z','','C','','','Z'],
-		['','','','Z','','',''],
-		['','','','','','',''],
-		['','','','','','',''],
-		['','Z','','','Z','',''],
-		['','','','','','',''],
-		['','','','','','','Z']
-	]	
+	abierta = []
+	cerrada = []
+	g, h = 0
 	zanahoriasComidas = 0
 	costoAcumulado = 0
 	#costoRegular = 1.0
+	borrarResultadosPrevios() # Borra carpeta que contiene resultados de la corrida anterior
 	paso = 0
-	print("--- Tablero inicial ---")
+	print("********** Tablero inicial **********")
+	tablero = leerTableroInicial("tableroInicial.txt")	
 	imprimirTablero(tablero)
-	print("\n\n")
-	posicionConejo = encontrarConejo(tablero)
+	cerrada.append(posicionConejo = encontrarConejo(tablero))
 	cantidadInicialZanahorias = cantidadZanahoriasTablero (tablero)
 	posicionAnteriorConejo = posicionConejo # Inicial, en este caso
 	zanahoraisComidas = 0
-
 	# Revisa si es que las condiciones son válidas, si se puede iniciar.
 	if ((cantidadInicialZanahorias < zanahoriasPorComer) or (posicionConejo[0]==-1 and posicionConejo[1]==-1)):
 		print ("Error al ingresar los parámetros")
 	else:
-		guardarArchivo(tablero, str(paso).zfill(5))
+		#guardarArchivo(tablero, str(paso).zfill(5))
+		abierta = getVecinos(posicionConejo, tableroVisible)
 		while(zanahoriasPorComer != zanahoraisComidas):
 			paso+=1
 			# Busca los espacios visibles
 			tableroVisible = getTableroVisible(tablero, rangoVision, posicionConejo)
-			print("--- Tablero visible ---")
+			print("-------------------- Tablero visible --------------------")
 			imprimirTablero(tableroVisible)
 			print("\n\n")
 			#coordenadasZanahorias = encontrarZanahorias(tableroVisible)
@@ -192,9 +283,8 @@ def main(rangoVision = 1, zanahoriasPorComer = 3):
 			# Calcular el costo de cada movimiento
 			calcularMejorMovimiento(posicionConejo, tableroVisible, posicionAnterior, tablero)
 			# Imprime resultado
-			print("PASO: "+ str(paso).zfill(5) + " IZQUIERDA: "+ " DERECHA: " + " ARRIBA: " + " ABAJO: "+" MOVIMIENTO: ")
-			#PASO: 00001 IZQUIERDA: 5 DERECHA: 3 ARRIBA: 8 ABAJO: 9 MOVIMIENTO: DERECHA
-
+			imprimirCostosDeCadaMovimiento(paso , "FALTA", "FALTA")
+			
 
 
 		print("PASO: "+ getNumeroPaso+ " FINAL")
