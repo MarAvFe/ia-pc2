@@ -1,4 +1,5 @@
 from random import randint, gauss
+from multiprocessing import Pool
 import numpy as np
 from shared import *
 import os
@@ -249,8 +250,6 @@ def correrTablero(tablero, direccion, consecutivo = -1):
     tablero = mezclarTableroConDirecciones(tablero, problema)
     if (tablero == []):
         return Puntaje(False, PUNTOSMIN)
-    if consecutivo != -1:
-        imprimirIndividuo(tablero, consecutivo)
     resultado = correrTableroAux(tablero, direccion)
     resultado.flechas = flechas
     return resultado
@@ -312,7 +311,7 @@ def darPaso(tablero, direccion):
     return tablero
 
 
-def funcionAjuste(tablero, direccion, consecutivo):
+def funcionAjusteOld(tablero, direccion, consecutivo):
     # Verifica cuan correcta es una solucion
     if (
         (len(tablero) != len(problema)) or
@@ -322,8 +321,12 @@ def funcionAjuste(tablero, direccion, consecutivo):
                         str(len(tablero)) + "x" + str(len(tablero[0])) + ")")
     res = correrTablero(tablero, direccion, consecutivo)
     return res.obtenerPuntaje()
-    #individuo.tablero = res[1]
-    #return individuo
+
+
+def funcionAjuste(tablero, direccion, consecutivo):
+    # Verifica cuan correcta es una solucion
+    res = correrTablero(tablero, direccion, consecutivo)
+    return res.obtenerPuntaje()
 
 
 def probarSolucion(tablero, direccion):
@@ -374,6 +377,7 @@ def ordenarPuntuados(arr):
         while j > 0 and arr[j].puntaje > arr[j-1].puntaje:
             arr[j], arr[j-1] = arr[j-1], arr[j]  #swap
             j = j-1
+        imprimirIndividuo(arr[i-1].tablero, i)
     return arr
 
 
@@ -407,6 +411,32 @@ def mutar(individuo):
     return individuo
 
 
+def paralelo(poblacion):
+    global DIRECCION
+    poblacionPuntuada = []
+    startIdx = poblacion[1]
+    poblacion = poblacion[0]
+    for idx, individuo in enumerate(poblacion):
+        if individuo.tablero == []:
+            continue
+        poblacion[idx].puntaje = funcionAjuste(alistar(individuo.tablero), DIRECCION, startIdx + idx)
+        poblacionPuntuada.append( individuo )
+    return poblacionPuntuada
+
+def puntuar(poblacion, direccion):
+    threads = 4
+    pool = Pool(processes=threads)
+    poblacionFragmentada = []
+    divisor = len(poblacion) / threads
+    for i in range(threads):
+        poblacionFragmentada.append((poblacion[ int(i * divisor) : int((i+1) * divisor)], i))
+    results = pool.map(paralelo, poblacionFragmentada)
+    puntuado = []
+    for r in results:
+        puntuado += r
+    return puntuado
+
+
 
 def buscarSolucion(direccion, tope, individuos):
     global N
@@ -420,16 +450,20 @@ def buscarSolucion(direccion, tope, individuos):
     global DIRECCION
     global GENERACION
     DIRECCION = direccion
+    multi = False
 
     while(not probarSolucion(alistar(poblacion[0].tablero), DIRECCION)):
-        #print("pob", len(poblacion))
         # --- Puntuar individuos ---
-        poblacionPuntuada = []
-        for idx, individuo in enumerate(poblacion):
-            if individuo.tablero == []:
-                continue
-            poblacion[idx].puntaje = funcionAjuste(alistar(individuo.tablero), DIRECCION, idx)
-            poblacionPuntuada.append( individuo )
+        if (not multi):  # Single thread
+            poblacionPuntuada = []
+            for idx, individuo in enumerate(poblacion):
+                if individuo.tablero == []:
+                    continue
+                poblacion[idx].puntaje = funcionAjuste(alistar(individuo.tablero), DIRECCION, idx)
+                poblacionPuntuada.append( individuo )
+        else:  # MULTITHREAD
+            poblacionPuntuada = puntuar(poblacion, DIRECCION)
+
         poblacionOrdenada = ordenarPuntuados(poblacionPuntuada)  # Puntajes más altos de primero
 
         # --- Reproducción y selección ---
@@ -452,7 +486,7 @@ def buscarSolucion(direccion, tope, individuos):
             print("Top:\n", poblacion[0])
         if ( GENERACION > tope ):
             break
-
+    print("Generaciones totales:", GENERACION)
     return poblacion[0]
 
 
@@ -465,7 +499,7 @@ def buscarSolucion(direccion, tope, individuos):
 # print(end - start)
 
 def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones):
-    # archivo a listaProblema
+    global problema
     problema = leerTablero(tableroInicial)
     direccion = {
         0: IZQUIERDA,
@@ -477,3 +511,8 @@ def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones)
     tabz = mezclarTableroConDirecciones(problema, alistar(mejor.tablero))
     print("tabz", imprimirTablero(tabz))
     return mejor
+
+
+## ANOTAR EN ANÁLISIS
+# El algoritmo tiene problemas con las zanahorias en los bordes, ya que requiere de una
+# ruta alternativa muy costosa de generar, y por "más vale pájaro en mano..." no encuentra nuevos caminos.

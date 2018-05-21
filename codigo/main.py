@@ -36,7 +36,6 @@ def main():
     #usage()
     parser = getArgumentos()
     args = parser.parse_args()
-    print(args)
     if(args.tablero_inicial == None):
         raise("No ha proporcionado un tablero inicial")
     tableroInicial = args.tablero_inicial[0]
