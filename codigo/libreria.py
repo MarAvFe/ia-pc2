@@ -5,6 +5,10 @@ from shared import *
 import os
 import time
 import threading
+import multiprocessing
+import resource
+import fcntl
+import shutil
 
 # ============================================== INDICACIONES GENERALES ===============================================
 # Este documento define las funciones requeridas para construir el programa.
@@ -35,6 +39,16 @@ direcciones = [ IZQUIERDA, DERECHA, ABAJO, ARRIBA ]
 problema = []
 N = 15
 M = 20
+
+
+c = {
+    'ENDC'    : '\033[0m',
+    'RED'     : '\033[1;31m',
+    'YELLOW'  : '\033[1;33m',
+    'BLUE'    : '\033[1;34m',
+    'BINBACK' : '\x1b'
+}
+
 
 def crearArchivoSalida():
     # Crear el archivo de salida y retornar el puntero
@@ -144,7 +158,7 @@ class Puntaje:
         return toPrt
 
 
-def imprimirTablero(tablero):
+def imprimirTablero(tablero, archivo = False):
     if (len(tablero) == 0):
         return "┌Tablero:─┐\n└─────────┘"
     tb = "┌Tablero:"
@@ -156,22 +170,51 @@ def imprimirTablero(tablero):
     toPrt += unders
     for i in tablero:
         toPrt += "│"
-        for j in i:
-            toPrt += j
+        if archivo:
+            for j in i:
+                toPrt += j
+        else:
+            for j in i:
+                if j == "C":
+                    toPrt += c['RED'] + j
+                elif j == "Z":
+                    toPrt += c['YELLOW'] + j
+                else:
+                    toPrt += c['BLUE'] + j
+                toPrt += c['ENDC']
         toPrt += "│\n"
     toPrt += "└────────" + unders[:-2] + "┘"
     return toPrt
 
 
+def get_open_fds():
+    fds = []
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    for fd in range(0, soft):
+        try:
+            flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+        except IOError:
+            continue
+        fds.append(fd)
+    return fds
+
+def get_file_names_from_file_number(fds):
+    names = []
+    for fd in fds:
+        names.append(os.readlink('/proc/self/fd/%d' % fd))
+    return names
+
+
 def imprimirIndividuo(tablero, consecutivo):
     # Imprimir tablero
+    global c
     directory = "../output/" + str(DIRECCION) + "/" + obtenerNombreArchivo(GENERACION) + "/"
     name = obtenerNombreArchivo(consecutivo) + ".txt"
     if not os.path.exists(directory):
         os.makedirs(directory)
-    file = open(directory + name, "w")
-    file.write(imprimirTablero(tablero))
-    file.close()
+    strTablero = imprimirTablero(tablero, True)
+    with open(directory + name, "w") as file:
+        file.write(strTablero)
 
 
 def obtenerEstadoTablero(tablero):
@@ -196,7 +239,7 @@ def contarFlechas(tablero):
     return flechas
 
 
-def mezclarTableroConDirecciones(tablero, direcciones):
+def mezclarTableroConDirecciones(tablero, direcciones, forzar = False):
     # tablero y direcciones son arerglos de nxm
     # Ubica las direcciones dentro del tablero
     # retorna un solo tablero con las direcciones, el conejo y las zanahorias
@@ -204,6 +247,9 @@ def mezclarTableroConDirecciones(tablero, direcciones):
     for i, fil in enumerate(tablero):
         for j, col in enumerate(fil):
             if( ( (tablero[i][j] == "C") or (tablero[i][j] == "Z") ) and (direcciones[i][j] != " ") ):
+                if forzar:
+                    tablero[i][j] = direcciones[i][j]
+                    continue
                 return []
             if(direcciones[i][j] != " "):
                 tablero[i][j] = direcciones[i][j]
@@ -389,7 +435,7 @@ def cruce(padre1, padre2):
 
 
 def mutar(individuo):
-    v = randint(0,2000)
+    v = randint(0,1800)
     mutar = 3 if (v < 50) else 2 if (v < 300) else 1 if (v < 1000) else 0
     while (mutar > 0):
         #print(imprimirTablero(individuo.tablero))
@@ -424,7 +470,7 @@ def paralelo(poblacion):
     return poblacionPuntuada
 
 def puntuar(poblacion, direccion):
-    threads = 4
+    threads = multiprocessing.cpu_count()
     pool = Pool(processes=threads)
     poblacionFragmentada = []
     divisor = len(poblacion) / threads
@@ -437,6 +483,18 @@ def puntuar(poblacion, direccion):
     return puntuado
 
 
+def vaciarCarpetaDireccion():
+    folder = "../output/" + str(DIRECCION)
+    for the_file in os.listdir(folder):
+        file_path = os.path.join(folder, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(e)
+
 
 def buscarSolucion(direccion, tope, individuos):
     global N
@@ -444,6 +502,7 @@ def buscarSolucion(direccion, tope, individuos):
     N = len(problema)
     M = len(problema[0])
     Puntaje.totalZanahoriasProblema = obtenerEstadoTablero(problema)
+    vaciarCarpetaDireccion()
     # Retorna al individuo más apto
     # --- Crear población inicial ---
     poblacion = crearPoblacion(individuos)
@@ -452,7 +511,7 @@ def buscarSolucion(direccion, tope, individuos):
     DIRECCION = direccion
     multi = False
 
-    while(not probarSolucion(alistar(poblacion[0].tablero), DIRECCION)):
+    while(True):  #not probarSolucion(alistar(poblacion[0].tablero), DIRECCION)):
         # --- Puntuar individuos ---
         if (not multi):  # Single thread
             poblacionPuntuada = []
@@ -468,9 +527,9 @@ def buscarSolucion(direccion, tope, individuos):
 
         # --- Reproducción y selección ---
         nuevaGeneracion = []
-        # 20% viejos, 60% cruzados, 20% nuevos
-        idxCruce = int(len(poblacion) * 0.2)
-        idxNuevos = int(len(poblacion) * 0.8)
+        # 5% viejos, 60% cruzados, 35% nuevos
+        idxCruce = int(len(poblacion) * 0.05)
+        idxNuevos = int(len(poblacion) * 0.65)
         for i in range(len(poblacionOrdenada[:idxCruce])):
             nuevaGeneracion.append(poblacionOrdenada[i])
         for i in range(len(poblacionOrdenada[idxCruce:idxNuevos])):
@@ -482,9 +541,9 @@ def buscarSolucion(direccion, tope, individuos):
         poblacion = nuevaGeneracion
         GENERACION += 1
         if GENERACION % 100 == 0:
-            print("Generacion:", GENERACION)
-            print("Top:\n", poblacion[0])
-        if ( GENERACION > tope ):
+            print("Top de generacion", str(GENERACION) + ":")
+            print(poblacion[0])
+        if ( GENERACION + 1 > tope ):
             break
     print("Generaciones totales:", GENERACION)
     return poblacion[0]
@@ -508,8 +567,8 @@ def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones)
         3: ABAJO
     }.get(direccionConejo, IZQUIERDA)
     mejor = buscarSolucion(direccion, generaciones, individuos)
-    tabz = mezclarTableroConDirecciones(problema, alistar(mejor.tablero))
-    print("tabz", imprimirTablero(tabz))
+    mezcla = mezclarTableroConDirecciones(problema, alistar(mejor.tablero), True)
+    print(imprimirTablero(mezcla))
     return mejor
 
 

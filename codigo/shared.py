@@ -1,5 +1,5 @@
 def leerTablero(ruta):
-    with open(ruta, "r+") as f:
+    with open(ruta, "r") as f:
         tablero = []
         for line in f:
             linea = []
