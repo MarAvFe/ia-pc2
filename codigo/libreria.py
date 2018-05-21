@@ -1,4 +1,8 @@
 from random import randint, gauss
+import numpy as np
+import os
+import time
+import threading
 
 # ============================================== INDICACIONES GENERALES ===============================================
 # Este documento define las funciones requeridas para construir el programa.
@@ -23,6 +27,7 @@ ARRIBA      = 'A'
 IZQUIERDA = '<'
 DERECHA      =  '>'
 ABAJO     =   'V'
+PUNTOSMIN = -99999
 paso  = 0
 direcciones = [ IZQUIERDA, DERECHA, ABAJO, ARRIBA ]
 problema = []
@@ -54,9 +59,8 @@ def imprimirTablero(tablero):
 
 
 def obtenerNombreArchivo(paso):
-    # nombre = '0000' + str(paso)
-    # return nombre[-5]
-    pass
+    nombre = '0000' + str(paso)
+    return nombre[-5:]
 
 
 def leerProblema(nombre):
@@ -84,7 +88,17 @@ def calcularCosto(direccion):
 # =====================================================================================================================
 
 DIRECCION = ""
-GENERACION = 0
+GENERACION = 1
+
+exitFlag = 0
+
+class myThread (threading.Thread):
+   def __init__(self, threadID, name, counter):
+      threading.Thread.__init__(self)
+      self.threadID = threadID
+      self.name = name
+   def run(self):
+      pass
 
 class Individuo:
     # tablero solo tiene las flechas
@@ -104,21 +118,27 @@ class Puntaje:
     # correcto dice si este acomodo conlleva a una solución
     # pasos: total de pasos para acabar en solución o error
     # flechas: total de flechas del tablero
-    def __init__(self, correcto, pasos, flechas = -1):
+    totalZanahoriasProblema = -1
+    def __init__(self, correcto, pasos, zanahorias, flechas = -1):
         self.correcto = correcto
         self.pasos = pasos
         self.flechas = flechas
+        self.zanahorias = zanahorias
 
     def obtenerPuntaje(self):
         # puntaje es una tupla (bool, int) donde el bool es si el tablero
         #   es una solución y el int la cantidad de pasos.
         # Puntuar si la función es una solución y la cantidad de pasos que toma
-        return (10000 if self.correcto else 0) - (self.pasos * 5) - (self.flechas * 100)
+        return ((10000 if self.correcto else 0) -
+                (self.pasos * 5) -
+                (self.flechas * 100) +
+                (1000 * (Puntaje.totalZanahoriasProblema - self.zanahorias)))
 
     def __str__(self):
         toPrt = "\nCorrecto: " + str(self.correcto)
         toPrt += "\nPasos: " + str(self.pasos)
         toPrt += "\nFlechas: " + str(self.flechas)
+        toPrt += "\nZanahorias: " + str(self.zanahorias)
         return toPrt
 
 
@@ -143,8 +163,13 @@ def imprimirTablero(tablero):
 
 def imprimirIndividuo(tablero, consecutivo):
     # Imprimir tablero
-    # name = "./output/" + DIRECCION + "/" + GENERACION + "/" + obtenerNombreArchivo(consecutivo) + ".txt"
-    pass
+    directory = "../output/" + str(DIRECCION) + "/" + obtenerNombreArchivo(GENERACION) + "/"
+    name = obtenerNombreArchivo(consecutivo) + ".txt"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    file = open(directory + name, "w")
+    file.write(imprimirTablero(tablero))
+    file.close()
 
 
 def obtenerEstadoTablero(tablero):
@@ -173,6 +198,7 @@ def mezclarTableroConDirecciones(tablero, direcciones):
     # tablero y direcciones son arerglos de nxm
     # Ubica las direcciones dentro del tablero
     # retorna un solo tablero con las direcciones, el conejo y las zanahorias
+    # print("mezcl",imprimirTablero(tablero), imprimirTablero(direcciones))
     for i, fil in enumerate(tablero):
         for j, col in enumerate(fil):
             if( ( (tablero[i][j] == "C") or (tablero[i][j] == "Z") ) and (direcciones[i][j] != " ") ):
@@ -205,32 +231,47 @@ def obtenerNuevaDireccion(tablero, direccion):
     return direccion
 
 
-def correrTablero(tablero, direccion, consecutivo):
-    global problema
+def alistar(tablero):
+    nuTab = []
+    for fil in tablero:
+        tmp = []
+        nuTab.append(list(fil))#tmp)
+    return nuTab
+
+
+def correrTablero(tablero, direccion, consecutivo = -1):
     # recibe un tablero con una dirección y lo ejecuta
+    global problema
+    global DIRECCION
+    global GENERACION
     flechas = contarFlechas(tablero)
     tablero = mezclarTableroConDirecciones(tablero, problema)
     if (tablero == []):
-        return Puntaje(False,-1), []
-    # imprimirIndividuo(tablero, consecutivo)
-    resultado, tablero = correrTableroAux(tablero, direccion)
+        return Puntaje(False, PUNTOSMIN)
+    if consecutivo != -1:
+        imprimirIndividuo(tablero, consecutivo)
+    resultado = correrTableroAux(tablero, direccion)
     resultado.flechas = flechas
-    return resultado, tablero
-
+    return resultado
 
 
 def correrTableroAux(tablero, direccion):
     direccionActual = direccion
     totalPasos = 0
     while(isConejoVivo(tablero)):
-        #print("paso",imprimirTablero(tablero))
+        zanahorias = obtenerEstadoTablero(tablero)
         if (obtenerEstadoTablero(tablero) == 0):
-            return Puntaje(True, totalPasos), tablero
+            return Puntaje(True, totalPasos, zanahorias)
         nuevaDireccion = obtenerNuevaDireccion(tablero, direccionActual)
         tablero = darPaso(tablero, direccionActual)
+        if (tablero == []):
+            break
+        #print("================================boopsi2", imprimirTablero(tableroNuevo))
         direccionActual = nuevaDireccion
         totalPasos += 1
-    return Puntaje(False, totalPasos), tablero
+        # time.sleep(0.3)
+        copiaTablero = tablero
+    return Puntaje(False, totalPasos, zanahorias)
 
 
 def obtenerPosicionConejo(tablero):
@@ -270,12 +311,23 @@ def darPaso(tablero, direccion):
     return tablero
 
 
-def funcionAjuste(individuo, direccion, consecutivo):
+def funcionAjuste(tablero, direccion, consecutivo):
     # Verifica cuan correcta es una solucion
-    res = correrTablero(individuo.tablero, direccion, consecutivo)
-    individuo.puntaje = res[0].obtenerPuntaje()
-    individuo.tablero = res[1]
-    return individuo
+    if (
+        (len(tablero) != len(problema)) or
+        (len(tablero[0]) != len(problema[0]))):
+        raise Exception("El problema y el tamaño de tablero de los tableros tienen tamaños diferentes: (" +
+                        str(len(problema)) + "x" + str(len(problema[0])) + ") != (" +
+                        str(len(tablero)) + "x" + str(len(tablero[0])) + ")")
+    res = correrTablero(tablero, direccion, consecutivo)
+    return res.obtenerPuntaje()
+    #individuo.tablero = res[1]
+    #return individuo
+
+
+def probarSolucion(tablero, direccion):
+    res = correrTablero(tablero, direccion)
+    return res.correcto
 
 
 def crearPoblacion(n):
@@ -285,27 +337,34 @@ def crearPoblacion(n):
     return poblacion
 
 
+def piezaAleatoria():
+    v = randint(0,5)
+    return  (' '        if v > 4 else (
+            (ARRIBA     if v > 3 else (
+            (ABAJO      if v > 2 else (
+            (DERECHA    if v > 1 else
+            IZQUIERDA) )) )) ))
+
+
 def individuoRandom():
-    def piezaAleatoria():
-        v = randint(0,100)
-        return  (' '        if v > 4 else (
-                (ARRIBA     if v > 3 else (
-                (ABAJO      if v > 2 else (
-                (DERECHA    if v > 1 else
-                IZQUIERDA) )) )) ))
     tablero = []
     for fil in range(N):
         fila = []
         for col in range(M):
-            fila.append(piezaAleatoria())
-        tablero.append(fila)
-    return Individuo(tablero, -1)
+            fila.append(' ')#piezaAleatoria())
+        tablero.append(tuple(fila))
+    return Individuo(tablero, PUNTOSMIN)
 
 
 def obtenerIndividuosAleatorios(poblacion):
     # Dist. gaussiana centrada al principio de la población ordenada
     # Elige más a menudo los individuos al principio de la lista
-    return  poblacion[int(abs(gauss(0,len(poblacion)/3)))], poblacion[int(abs(gauss(0,len(poblacion)/3)))]
+    maximo = len(poblacion)
+    mu, sigma = 0, maximo/3
+    idx1 = abs(int(np.random.normal(mu, sigma, 1)[0])) % maximo
+    idx2 = abs(int(np.random.normal(mu, sigma, 1)[0])) % maximo
+    return  poblacion[idx1], poblacion[idx2]
+
 
 def ordenarPuntuados(arr):
     # Recibe una poblacion puntuada y la ordena de mayor a menor
@@ -317,31 +376,83 @@ def ordenarPuntuados(arr):
     return arr
 
 
-def buscarSolucion():
+def cruce(padre1, padre2):
+    division = randint(1,len(padre1.tablero)-2)
+    hijo = Individuo(padre1.tablero[:division] + padre2.tablero[division:], PUNTOSMIN)
+    hijo = mutar(hijo)
+    return hijo
+
+
+def mutar(individuo):
+    v = randint(0,2000)
+    mutar = 3 if (v < 50) else 2 if (v < 300) else 1 if (v < 1000) else 0
+    while (mutar > 0):
+        #print(imprimirTablero(individuo.tablero))
+        #print("mutacion....")
+        randFil = randint(0,len(individuo.tablero))
+        randCol = randint(0,len(individuo.tablero[0]))
+        tablero = []
+        for fil in range(len(individuo.tablero)):
+            fila = []
+            for col in range(len(individuo.tablero[0])):
+                if ( (fil == randFil) and (col == randCol) ):
+                    fila.append(piezaAleatoria())
+                else:
+                    fila.append(individuo.tablero[fil][col])
+            tablero.append(tuple(fila))
+        individuo = Individuo(tablero, PUNTOSMIN)
+        mutar -= 1
+        #print(imprimirTablero(individuo.tablero))
+    return individuo
+
+
+
+def buscarSolucion(direccion):
+    global N
+    global M
+    N = len(problema)
+    M = len(problema[0])
+    Puntaje.totalZanahoriasProblema = obtenerEstadoTablero(problema)
     # Retorna al individuo más apto
     # --- Crear población inicial ---
-    # poblacion = crearPoblacion(n)
-    # global DIRECCION
-    # global GENERACION
-    #
-    # while(poblacion[0].puntaje < 100):  # Por definir segun la funcion de puntaje
-    #     --- Puntuar individuos ---
-    #     poblacionPuntuada = []
-    #     for individuo in poblacion:
-    #         poblacionPuntuada.append( funcionAjuste(individuo, DIRECCION, poblacion.indexOf(individuo)) )
-    #     poblacion = ordenarPuntuados(poblacionPuntuada)  # Puntajes más altos de primero
-    #
-    #     --- Reproducción y selección ---
-    #     nuevaGeneracion = []
-    #     for i in range(len(poblacion)):
-    #         padre1, padre2 = obtenerIndividuosAleatorios(poblacion)
-    #         nuevaGeneracion.append( cruce( padre1, padre2 ) )
-    #     poblacion = nuevaGeneracion
-    #     GENERACION += 1
-    #     print("Generacion:", GENERACION) if ( GENERACION % 10 == 0 ) else None
-    #     break if ( GENERACION > 100 ) else None
-    # return poblacion[0]
-    pass
+    poblacion = crearPoblacion(50)
+    global DIRECCION
+    global GENERACION
+    DIRECCION = direccion
+
+    while(not probarSolucion(alistar(poblacion[0].tablero), DIRECCION)):
+        #print("pob", len(poblacion))
+        # --- Puntuar individuos ---
+        poblacionPuntuada = []
+        for idx, individuo in enumerate(poblacion):
+            if individuo.tablero == []:
+                continue
+            poblacion[idx].puntaje = funcionAjuste(alistar(individuo.tablero), DIRECCION, idx)
+            poblacionPuntuada.append( individuo )
+        poblacionOrdenada = ordenarPuntuados(poblacionPuntuada)  # Puntajes más altos de primero
+
+        # --- Reproducción y selección ---
+        nuevaGeneracion = []
+        # 20% viejos, 60% cruzados, 20% nuevos
+        idxCruce = int(len(poblacion) * 0.2)
+        idxNuevos = int(len(poblacion) * 0.8)
+        for i in range(len(poblacionOrdenada[:idxCruce])):
+            nuevaGeneracion.append(poblacionOrdenada[i])
+        for i in range(len(poblacionOrdenada[idxCruce:idxNuevos])):
+            padre1, padre2 = obtenerIndividuosAleatorios(poblacionOrdenada)
+            nuevaGeneracion.append( cruce( padre1, padre2 ) )
+        for i in crearPoblacion(len(poblacionOrdenada[idxNuevos:])):
+            nuevaGeneracion.append(i)
+
+        poblacion = nuevaGeneracion
+        GENERACION += 1
+        if GENERACION % 100 == 0:
+            print("Generacion:", GENERACION)
+            print("Top:\n", imprimirTablero(poblacion[0].tablero))
+        if ( GENERACION > 2000 ):
+            break
+
+    return poblacion[0]
 
 
 # =====================================================================================================================
@@ -355,7 +466,7 @@ tab2 = [
     ['<',' ',' ','V'],
     ['Z',' ',' ',' ']
 ]
-print(obtenerPosicionConejo(tab2))
+#print(obtenerPosicionConejo(tab2))
 
 
 problema = [
@@ -398,7 +509,36 @@ tablero4 = [
     ['>',' ',' ','A'],
     [' ',' ',' ',' ']
 ]
-print("cota",correrTablero(tablero, ABAJO, 1))
-print(funcionAjuste(Individuo(tablero2,-1), ABAJO, 53))
-print(funcionAjuste(Individuo(tablero3,-1), DERECHA, 53))
-print(funcionAjuste(Individuo(tablero4,-1), IZQUIERDA, 53))
+#print("cota",correrTablero(tablero, ABAJO, 1))
+#print(funcionAjuste(Individuo(tablero2,-1), ABAJO, 53))
+#print(funcionAjuste(Individuo(tablero3,-1), DERECHA, 53))
+#print(funcionAjuste(Individuo(tablero4,-1), IZQUIERDA, 53))
+
+problema = [
+    [' ',' ','C',' ',' ',' ',' ',' ',' ',' ','Z',' ',' ',' '],
+    [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+    [' ','Z',' ','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ','Z'],
+    ['Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+    [' ',' ',' ',' ',' ',' ',' ','Z',' ',' ',' ',' ',' ',' '],
+    [' ',' ',' ',' ',' ',' ',' ',' ',' ','Z',' ',' ',' ',' '],
+    [' ','Z',' ','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ','Z'],
+    [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
+]
+problema = [
+    [' ',' ','C'],
+    [' ',' ',' '],
+    [' ','Z',' '],
+    ['Z',' ',' '],
+    [' ',' ',' '],
+    [' ','Z',' '],
+    [' ','Z',' '],
+    [' ',' ',' ']
+]
+
+start = time.time()
+top = buscarSolucion(ABAJO)
+print("=============== RESULTADOS ===============")
+print("Solución", top)
+print(imprimirTablero(mezclarTableroConDirecciones(alistar(top.tablero), problema)))
+end = time.time()
+print(end - start)

@@ -30,7 +30,7 @@ def test_individuoRandom():
     # print(ind)
     assert type(ind) == Individuo
     assert type(ind.tablero) == list
-    assert type(ind.tablero[0]) == list
+    assert type(ind.tablero[0]) == tuple
 
 def test_darPaso():
     tablero = [
@@ -130,6 +130,29 @@ def test_imprimirIndividuo():
 def test_obtenerEstadoTablero():
     # assert obtenerEstadoTablero(tablero) == True
     pass
+
+
+def test_cruce():
+    tableroCruce1 = [
+        [' ',' ',' ',' '],
+        ['<',' ','>',' '],
+        [' ',' ',' ',' '],
+        [' ','A',' ',' '],
+        [' ',' ',' ','>'],
+        ['>',' ',' ',' ']
+    ]
+    tableroCruce2 = [
+        [' ','A',' ',' '],
+        [' ','A',' ',' '],
+        ['V',' ','<',' '],
+        [' ',' ',' ',' '],
+        ['>',' ',' ','A'],
+        [' ',' ',' ',' ']
+    ]
+    ind = cruce(Individuo(tableroCruce1, -1), Individuo(tableroCruce2, -1))
+    assert type(ind) == Individuo
+    assert type(ind.tablero) != tableroCruce1
+    assert type(ind.tablero) != tableroCruce2
 
 
 def test_contarFlechas():
@@ -244,18 +267,8 @@ def test_correrTablero():
         [' ',' ',' ',' ']
     ]
     res = correrTablero(tablero, ABAJO, 1)
-    assert type(res[0]) == Puntaje
-    assert type(res[0].obtenerPuntaje()) == int
-    assert type(res[1]) == list
-    assert type(res[1][0]) == list
-    assert res[1] == [
-        [' ','A',' ',' '],
-        [' ','A',' ',' '],
-        [' ',' ',' ','C'],
-        [' ',' ',' ',' '],
-        [' ',' ',' ',' '],
-        [' ',' ',' ',' ']
-    ]
+    assert type(res) == Puntaje
+    assert type(res.obtenerPuntaje()) == int
 
 
 def test_funcionAjuste():
@@ -278,7 +291,6 @@ test_darPaso()
 test_crearArchivoSalida()
 test_documentarPaso()
 test_cerrarArchivoSalida()
-test_imprimirTablero()
 test_obtenerNombreArchivo()
 test_leerProblema()
 test_calcularCostoPasos()
