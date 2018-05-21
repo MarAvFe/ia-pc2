@@ -1,5 +1,6 @@
 from random import randint, gauss
 import numpy as np
+from shared import *
 import os
 import time
 import threading
@@ -407,7 +408,7 @@ def mutar(individuo):
 
 
 
-def buscarSolucion(direccion):
+def buscarSolucion(direccion, tope, individuos):
     global N
     global M
     N = len(problema)
@@ -415,7 +416,7 @@ def buscarSolucion(direccion):
     Puntaje.totalZanahoriasProblema = obtenerEstadoTablero(problema)
     # Retorna al individuo más apto
     # --- Crear población inicial ---
-    poblacion = crearPoblacion(50)
+    poblacion = crearPoblacion(individuos)
     global DIRECCION
     global GENERACION
     DIRECCION = direccion
@@ -448,97 +449,31 @@ def buscarSolucion(direccion):
         GENERACION += 1
         if GENERACION % 100 == 0:
             print("Generacion:", GENERACION)
-            print("Top:\n", imprimirTablero(poblacion[0].tablero))
-        if ( GENERACION > 2000 ):
+            print("Top:\n", poblacion[0])
+        if ( GENERACION > tope ):
             break
 
     return poblacion[0]
 
 
-# =====================================================================================================================
-# =========================================== Sección de Pruebas ======================================================
-# =====================================================================================================================
-tab2 = [
-    [' ','A','C',' '],
-    [' ','A',' ',' '],
-    [' ',' ','>','Z'],
-    ['Z',' ',' ',' '],
-    ['<',' ',' ','V'],
-    ['Z',' ',' ',' ']
-]
-#print(obtenerPosicionConejo(tab2))
+# start = time.time()
+# top = buscarSolucion(ABAJO)
+# print("=============== RESULTADOS ===============")
+# print("Solución", top)
+# print(imprimirTablero(mezclarTableroConDirecciones(alistar(top.tablero), problema)))
+# end = time.time()
+# print(end - start)
 
-
-problema = [
-    [' ',' ','C',' '],
-    [' ',' ',' ',' '],
-    [' ','Z',' ','Z'],
-    ['Z',' ',' ',' '],
-    [' ',' ',' ',' '],
-    [' ',' ',' ',' ']
-]
-tablero = [
-    [' ','A',' ',' '],
-    [' ','A',' ',' '],
-    ['V',' ','<',' '],
-    [' ',' ',' ',' '],
-    ['>',' ',' ','A'],
-    [' ',' ',' ',' ']
-]
-tablero2 = [
-    [' ','A',' ',' '],
-    [' ','A',' ',' '],
-    ['V',' ','<',' '],
-    [' ',' ',' ',' '],
-    ['>',' ',' ','A'],
-    [' ',' ',' ',' ']
-]
-tablero3 = [
-    [' ','A',' ',' '],
-    [' ','A',' ',' '],
-    ['V',' ','<',' '],
-    [' ',' ',' ',' '],
-    ['>',' ',' ','A'],
-    [' ',' ',' ',' ']
-]
-tablero4 = [
-    [' ','A',' ',' '],
-    [' ','A',' ',' '],
-    ['V',' ','<',' '],
-    [' ',' ',' ',' '],
-    ['>',' ',' ','A'],
-    [' ',' ',' ',' ']
-]
-#print("cota",correrTablero(tablero, ABAJO, 1))
-#print(funcionAjuste(Individuo(tablero2,-1), ABAJO, 53))
-#print(funcionAjuste(Individuo(tablero3,-1), DERECHA, 53))
-#print(funcionAjuste(Individuo(tablero4,-1), IZQUIERDA, 53))
-
-problema = [
-    [' ',' ','C',' ',' ',' ',' ',' ',' ',' ','Z',' ',' ',' '],
-    [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-    [' ','Z',' ','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ','Z'],
-    ['Z',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-    [' ',' ',' ',' ',' ',' ',' ','Z',' ',' ',' ',' ',' ',' '],
-    [' ',' ',' ',' ',' ',' ',' ',' ',' ','Z',' ',' ',' ',' '],
-    [' ','Z',' ','Z',' ',' ',' ',' ',' ',' ',' ',' ',' ','Z'],
-    [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']
-]
-problema = [
-    [' ',' ','C'],
-    [' ',' ',' '],
-    [' ','Z',' '],
-    ['Z',' ',' '],
-    [' ',' ',' '],
-    [' ','Z',' '],
-    [' ','Z',' '],
-    [' ',' ',' ']
-]
-
-start = time.time()
-top = buscarSolucion(ABAJO)
-print("=============== RESULTADOS ===============")
-print("Solución", top)
-print(imprimirTablero(mezclarTableroConDirecciones(alistar(top.tablero), problema)))
-end = time.time()
-print(end - start)
+def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones):
+    # archivo a listaProblema
+    problema = leerTablero(tableroInicial)
+    direccion = {
+        0: IZQUIERDA,
+        1: DERECHA,
+        2: ARRIBA,
+        3: ABAJO
+    }.get(direccionConejo, IZQUIERDA)
+    mejor = buscarSolucion(direccion, generaciones, individuos)
+    tabz = mezclarTableroConDirecciones(problema, alistar(mejor.tablero))
+    print("tabz", imprimirTablero(tabz))
+    return mejor
