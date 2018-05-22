@@ -221,8 +221,8 @@ def grupoZanahorias(tablero, v, zanahorias):
 	print(str(tAlto)+","+str(tAncho))
 	tmpZanahorias = 0
 	x_v, y_v = v[0]
-	print("x_v: "+ str(x_v))
-	print("y_v: "+ str(y_v))
+	#print("x_v: "+ str(x_v))
+	#print("y_v: "+ str(y_v))
 	for f in tablero: # Izquierda
 		for c in f:
 			
@@ -438,4 +438,4 @@ def main_function(rangoVision , zanahoriasPorComer , nombreTableroInicial="table
 	print("PASO: "+ str(paso).zfill(5) + " FINAL")
 
 
-main_function(2,10)
+main_function(5,3)
