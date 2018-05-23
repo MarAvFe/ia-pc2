@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import sys
 import argparse
 import os
-#import a_estrella as ae
-import libreria as lib
-import matplotlib.pyplot as plt
+import aEstrella as ae
+#import libreria as lib
+#import matplotlib.pyplot as plt
 import time
 
 def usage():
@@ -47,10 +48,10 @@ def main():
         if( (args.zanahorias==None) or (args.vision==None)):
             print("Faltan comandos!, Error!")
         else:
-            print("======= ALGORITMO A ESTRELLA =======")
-            print(getStarTitle())
+            print("  ALGORITMO A ESTRELLA ")
+            #print(getStarTitle())
             ##Llama la funcion de a estrella
-            ae.main_function(arg.vision[0],args.zanahorias[0])
+            ae.main_function(args.vision[0],args.zanahorias[0])
 
     elif args.genetico:
         if(args.individuos==None):
@@ -72,7 +73,7 @@ def main():
         elif args.abajo:
             direccionConejo = 3
 
-        print("======= GENÉTICO =======")
+        print("  GENETICO ")
         print("Se imprime el mejor individuo cada 100 generaciones.")
         if args.benchmark == None:
             print(getGeneticTitle())
@@ -91,7 +92,7 @@ def main():
                 duracion = end-start
                 tiemposIndividuos.append(duracion)
                 correctitudIndividuos.append(solucion.puntaje)
-                print("Individuos:", i, "Duración:", duracion)
+                print("Individuos:", i, "Duracion:", duracion)
             for i in valoresArbitrarios:
                 start = time.time()
                 solucion = lib.algoritmoGenetico(tableroInicial, direccionConejo, int(i*0.05), i)
@@ -99,7 +100,7 @@ def main():
                 duracion = end-start
                 tiemposGeneraciones.append(duracion)
                 correctitudGeneraciones.append(solucion.puntaje)
-                print("Generaciones:", i, "Duración:", duracion)
+                print("Generaciones:", i, "Duracion:", duracion)
             print(tiemposIndividuos, tiemposGeneraciones)
             print(correctitudIndividuos, correctitudGeneraciones)
 
@@ -107,7 +108,7 @@ def main():
             plt.plot(valoresArbitrarios, tiemposGeneraciones, '-ro')
             plt.axis([0, valoresArbitrarios[-1]*1.1, 0, high(tiemposIndividuos, tiemposGeneraciones)*1.1])
             plt.xlabel('Ind (Azul) / Gen (Rojo)')
-            plt.ylabel('Duración (s)')
+            plt.ylabel('Duracion (s)')
             plt.show()
 
             plt.plot(valoresArbitrarios, correctitudIndividuos, '-bo')
@@ -130,27 +131,27 @@ def minimum(lista1, lista2):
     return min(lista1[0],lista2[0])
 
 
-def getStarTitle():
-    return """
-  .                 .         ____      .                           .                      .
-                             /    \            .          .         .                      ;
-            .               /      \                                :                  - --+- -
-                    .      /   /\   \ .      .      .         .     !           .          !
-   .                      /   /__\   \                              |        .             .
-            .            /            \               .            _|_         +
-                    .   /    ______    \        .           .    ,´ | `.
- .       .             /____/      \____\   .              --- --+-<#>-+- ---  --  -
-                 .               .    .          .               `._|_,'
-               _________________      ____         __________       T
- .       .    /                 |    /    \    .  |          \      |
-     .       /    ______   _____| . /      \      |    ___    |     !
-             \    \    |   |       /   /\   \     |   |___>   |     :         . :
-           .  \    \   |   |      /   /__\   \  . |         _/      .       *
- .     ________>    |  |   | .   /            \   |   |\    \_______    .
-      |            /   |   |    /    ______    \  |   | \           |
-      |___________/    |___|   /____/      \____\ |___|  \__________|    .
-
- """
+##def getStarTitle():
+##    return """
+##  .                 .         ____      .                           .                      .
+##                             /    \            .          .         .                      ;
+##            .               /      \                                :                  - --+- -
+##                    .      /   /\   \ .      .      .         .     !           .          !
+##   .                      /   /__\   \                              |        .             .
+##            .            /            \               .            _|_         +
+##
+## .       .             /____/      \____\   .              
+##                 .               .    .          .               `._|_,'
+##               _________________      ____         __________       T
+## .       .    /                 |    /    \    .  |          \      |
+##     .       /    ______   _____| . /      \      |    ___    |     !
+##             \    \    |   |       /   /\   \     |   |___>   |     :         . :
+##           .  \    \   |   |      /   /__\   \  . |         _/      .       *
+## .     ________>    |  |   | .   /            \   |   |\    \_______    .
+##      |            /   |   |    /    ______    \  |   | \           |
+##      |___________/    |___|   /____/      \____\ |___|  \__________|    .
+##
+## """
 
 
 def getGeneticTitle():

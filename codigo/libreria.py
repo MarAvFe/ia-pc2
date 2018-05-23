@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from random import randint, gauss
 from multiprocessing import Pool
 import numpy as np

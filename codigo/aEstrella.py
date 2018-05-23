@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 import shutil
 import os
@@ -39,7 +40,7 @@ def leerTableroInicial(nombreArchivo):
 
 
 
-# Guarda en un archivo de texto el tablero después de dar un paso
+# Guarda en un archivo de texto el tablero despues de dar un paso
 def guardarArchivo(tablero, nombre):
 	if not os.path.exists("resultados"):
 		os.makedirs("resultados")
@@ -438,4 +439,4 @@ def main_function(rangoVision , zanahoriasPorComer , nombreTableroInicial="table
 	print("PASO: "+ str(paso).zfill(5) + " FINAL")
 
 
-main_function(5,3)
+
