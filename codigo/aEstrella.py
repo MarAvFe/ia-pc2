@@ -1,6 +1,7 @@
 import random
 import shutil
 import os
+from random import randint
 
 
 # Busca y encuentra las coordenadas de todas las zanahorias en el tablero visible
@@ -78,9 +79,18 @@ def moverConejoTablero(posicionConejo, movimientoGanador, tablero):
 	return comioZanahoria, tablero
 
 def getMejorMovimiento(listaF):
-	movimientos = ["IZQUIERDA", "DERECHA", "ARRIBA", "ABAJO"]
-	indice = 0
-	return movimientos[listaF.index(min(listaF))]
+    movimientos = ["IZQUIERDA", "DERECHA", "ARRIBA", "ABAJO"]
+
+    minimoValor = min(listaF)
+    apareceEnLista = listaF.count(minimoValor)
+    
+    if(apareceEnLista>1):
+        r = random.randint(0,3)
+        while ( minimoValor != listaF[r] ):
+            r = random.randint(0,3)                    
+        return movimientos[r]
+    else:
+        return movimientos[listaF.index(min(listaF))]
 
 def imprimirCostosDeCadaMovimiento(paso, costoPorMovimiento, movimientoGanador):
 	print("PASO: "+ str(paso).zfill(5) + " IZQUIERDA: "+ str(costoPorMovimiento[0]) +
@@ -141,9 +151,10 @@ def imprimirTablero(tablero):
 		tmp=""
 		for c in range(len(tablero[f])):
 			if (tablero[f][c]==" "):
-				tmp+="·"
+				tmp+=" · "
 			else:
-				tmp+=tablero[f][c]
+                                
+				tmp+=' '+tablero[f][c]+' '
 		print(tmp)
 
 def borrarResultadosPrevios():
@@ -210,13 +221,13 @@ def grupoZanahorias(tablero, v, zanahorias):
 	print(str(tAlto)+","+str(tAncho))
 	tmpZanahorias = 0
 	x_v, y_v = v[0]
-	print("x_v: "+ str(x_v))
-	print("y_v: "+ str(y_v))
+	#print("x_v: "+ str(x_v))
+	#print("y_v: "+ str(y_v))
 	for f in tablero: # Izquierda
 		for c in f:
 			
 			if (conta <= y_v ):
-				print ("C:"+str(c))
+				#print ("C:"+str(c))
 				if (c=="Z"):
 					tmpZanahorias+=1
 			conta+=1
@@ -245,10 +256,10 @@ def grupoZanahorias(tablero, v, zanahorias):
 	conta = x_v
 	print("conta: "+str(conta))
 	for f in tablero: 
-		print("iteración")
+		#print("iteración")
 		for c in f:
 			if (conta <= x_v and conta >=0):
-				print ("C:"+str(c)+", contador: "+str(conta))
+				#print ("C:"+str(c)+", contador: "+str(conta))
 				if (c=="Z"):
 					tmpZanahorias+=1
 			else:
@@ -264,10 +275,10 @@ def grupoZanahorias(tablero, v, zanahorias):
 	conta = 0
 	print("conta: "+str(conta))
 	for f in tablero: 
-		print("iteración")
+		#print("iteración")
 		for c in f:
 			if (conta >= x_v):
-				print ("C:"+str(c)+", contador: "+str(conta))
+				#print ("C:"+str(c)+", contador: "+str(conta))
 				if (c=="Z"):
 					tmpZanahorias+=1
 			else:
@@ -312,7 +323,7 @@ def penalizarEstadoAnterior(ultimoMovimientoGanador, vecinos):
 	return penalizacion
 
 
-def main_function(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial="tableroInicial.txt"):
+def main_function(rangoVision , zanahoriasPorComer , nombreTableroInicial="tableroInforme.txt"):
 	borrarResultadosPrevios()
 	abierta = []
 	cerrada = []
@@ -361,21 +372,24 @@ def main_function(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial=
 # **** FIN DE NO BORRAR
 
 			# Penalizar para que no choque con la pared
-			p3 = penalidadPared(paredIzq,paredDer, paredArr, paredAba) #falta revisar
-			print("PENALIDAD PARED:  "+"IZQUIERDA: " + str(p3[0])+ ", DERECHA: " + 
-			str(p3[1]) +", ARRIBA: " + str(p3[2])+", ABAJO: " + str(p3[3]))				
-			lH = [x + y for x, y in zip(lH, p3)]
+##			p3 = penalidadPared(paredIzq,paredDer, paredArr, paredAba) #falta revisar
+##			print("PENALIDAD PARED:  "+"IZQUIERDA: " + str(p3[0])+ ", DERECHA: " + 
+##			str(p3[1]) +", ARRIBA: " + str(p3[2])+", ABAJO: " + str(p3[3]))				
+##			lH = [x + y for x, y in zip(lH, p3)]
 
 			# Revisa si hay zanahorias en el tablero visible
 			if (len(coordenadasZanahorias)!= 0):
 				# Hay zanahorias a la vista
 				# Sacar costo de la distancia del conejo a la zanahoria más cercana
+				
 				p1 = zanahoriaMasCercana(coordenadasZanahorias, vecinos)
 				lH = [x + y for x, y in zip(lH, p1)] #suma la penalidad anterior al heurístico
-				print("* COORDENADAS VECINOS: "+ str(vecinos[0][0])+","+str(vecinos[0][1])+", "
-					+str(vecinos[1][0])+","+str(vecinos[1][1])+
-					","+str(vecinos[2][0])+ ","+str(vecinos[2][1])+
-					","+str(vecinos[3][0])+","+str(vecinos[3][1]))
+				
+##				print("* COORDENADAS VECINOS: "+ str(vecinos[0][0])+","+str(vecinos[0][1])+", "
+##					+str(vecinos[1][0])+","+str(vecinos[1][1])+
+##					","+str(vecinos[2][0])+ ","+str(vecinos[2][1])+
+##					","+str(vecinos[3][0])+","+str(vecinos[3][1]))
+##				
 				print("PENALIDAD zanahoria cercana: "+"IZQUIERDA: " + str(p1[0])+ ", DERECHA: " + 
 				str(p1[1]) +", ARRIBA: " + str(p1[2])+", ABAJO: " + str(p1[3]))		
 				# Calcula la penalidad según grupo de zanahorias que tenga cerca		
@@ -424,4 +438,4 @@ def main_function(rangoVision = 1, zanahoriasPorComer = 3, nombreTableroInicial=
 	print("PASO: "+ str(paso).zfill(5) + " FINAL")
 
 
-main_function(2, 2)
+main_function(5,3)
