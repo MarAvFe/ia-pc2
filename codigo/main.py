@@ -48,11 +48,7 @@ def main():
             print("Faltan comandos!, Error!")
         else:
             print("======= ALGORITMO A ESTRELLA =======")
-            print("Direccion del txt:" + args.direccion[0])
-            print("Vision de:")
-            print(args.vision[0])
-            print("Zanahorias:")
-            print(args.zanahorias[0])
+            print(getStarTitle())
             ##Llama la funcion de a estrella
             ae.main_function(arg.vision[0],args.zanahorias[0])
 
@@ -87,7 +83,7 @@ def main():
             tiemposGeneraciones = []
             correctitudIndividuos = []
             correctitudGeneraciones = []
-            valoresArbitrarios = [100,250,1000,5000]#,10000]
+            valoresArbitrarios = [100,250,1000]  #,5000,10000]
             for i in valoresArbitrarios:
                 start = time.time()
                 solucion = lib.algoritmoGenetico(tableroInicial, direccionConejo, i, int(i*0.05))
@@ -136,42 +132,26 @@ def minimum(lista1, lista2):
 
 def getStarTitle():
     return """
-  .                 .         ____      .                         .
-                             /    \            .          .
-            .               /      \
-                    .      /   /\   \ .      .      .         .
-   .                      /   /__\   \
-            .            /            \               .
-                    .   /    ______    \        .           .
- .       .             /____/      \____\   .
-                 .               .    .          .              .   .
-               _________________      ____         __________
- .       .    /                 |    /    \    .  |          \
-     .       /    ______   _____| . /      \      |    ___    |     .     .
-             \    \    |   |       /   /\   \     |   |___>   |
-           .  \    \   |   |      /   /__\   \  . |         _/               .
+  .                 .         ____      .                           .                      .
+                             /    \            .          .         .                      ;
+            .               /      \                                :                  - --+- -
+                    .      /   /\   \ .      .      .         .     !           .          !
+   .                      /   /__\   \                              |        .             .
+            .            /            \               .            _|_         +
+                    .   /    ______    \        .           .    ,´ | `.
+ .       .             /____/      \____\   .              --- --+-<#>-+- ---  --  -
+                 .               .    .          .               `._|_,'
+               _________________      ____         __________       T
+ .       .    /                 |    /    \    .  |          \      |
+     .       /    ______   _____| . /      \      |    ___    |     !
+             \    \    |   |       /   /\   \     |   |___>   |     :         . :
+           .  \    \   |   |      /   /__\   \  . |         _/      .       *
  .     ________>    |  |   | .   /            \   |   |\    \_______    .
       |            /   |   |    /    ______    \  |   | \           |
       |___________/    |___|   /____/      \____\ |___|  \__________|    .
 
  """
-def getStarTitle2():
-    return """
-         .                      .
-         .                      ;
-         :                  - --+- -
-         !           .          !
-         |        .             .
-        _|_         +
-      ,´ | `.
---- --+-<#>-+- ---  --  -
-      `._|_,'
-         T
-         |
-         !
-         :         . :
-         .       *
-"""
+
 
 def getGeneticTitle():
     return """
