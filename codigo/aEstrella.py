@@ -434,7 +434,7 @@ def main_function(rangoVision , zanahoriasPorComer , nombreTableroInicial="table
 			print("-> CANTIDAD DE ZANAHORIAS COMIDAS: " + str(zanahoriasComidas))
 			print("-> CANTIDAD DE ZANAHORIAS POR COMER: " + str(zanahoriasPorComer))	
 			input("PRESIONAR UNA TECLA PARA EL SIGUIENTE MOVIMIENTO") 
-			guardarArchivo(tablero, str(paso).zfill(5))
+			guardarArchivo(tableroVisible, str(paso).zfill(5))
 			
 	print("PASO: "+ str(paso).zfill(5) + " FINAL")
 
