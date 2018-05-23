@@ -1,0 +1,638 @@
+┌─17:17:36 marcello (0) codigo [master]
+└$ python main.py --tablero_inicial problemaGenetico.txt --genetico --abajo --individuos 500 --generaciones 500 --benchmark
+======= GENÉTICO =======
+Se imprime el mejor individuo cada 100 generaciones.
+┌Tablero:┐
+│       C│
+│ >    Z │
+│Z      <│
+│     Z  │
+│      Z │
+│  Z   Z │
+│ Z      │
+└────────┘
+Individuos: 100 Duración: 0.10228943824768066
+┌Tablero:┐
+│       C│
+│      Z │
+│Z       │
+│     Z  │
+│      Z │
+│  Z   Z │
+│ Z    A<│
+└────────┘
+Individuos: 250 Duración: 0.45740699768066406
+┌Tablero:┐
+│ <     C│
+│>    VZ │
+│Z     V<│
+│     Z  │
+│      Z │
+│  Z  <Z │
+│AZ    < │
+└────────┘
+Individuos: 1000 Duración: 13.802203178405762
+Top de generacion 100:
+Puntaje: 3945
+┌Tablero:┐
+│        │
+│>    V  │
+│  >   < │
+│        │
+│      V │
+│A <    <│
+│     <  │
+└────────┘
+Top de generacion 200:
+Puntaje: 16070
+┌Tablero:┐
+│        │
+│>V   V <│
+│        │
+│        │
+│     > V│
+│A      <│
+│        │
+└────────┘
+┌Tablero:┐
+│       C│
+│>V   VZ<│
+│Z       │
+│     Z  │
+│     >ZV│
+│A Z   Z<│
+│ Z      │
+└────────┘
+Individuos: 5000 Duración: 530.7220304012299
+┌Tablero:┐
+│       C│
+│      Z │
+│Z       │
+│     Z  │
+│      Z │
+│  Z   Z │
+│ Z      │
+└────────┘
+Generaciones: 100 Duración: 18.91150736808777
+┌Tablero:┐
+│       C│
+│      Z │
+│Z       │
+│     Z  │
+│      Z │
+│  Z   Z │
+│ Z      │
+└────────┘
+Generaciones: 250 Duración: 0.014622688293457031
+Top de generacion 300:
+Puntaje: 3485
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│ V      │
+└────────┘
+Top de generacion 400:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 500:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 600:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 700:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 800:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 900:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 1000:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+┌Tablero:┐
+│       C│
+│>     Z │
+│Z       │
+│     Z  │
+│      Z │
+│A Z   Z<│
+│ Z      │
+└────────┘
+Generaciones: 1000 Duración: 14.482962846755981
+Top de generacion 1100:
+Puntaje: 3585
+┌Tablero:┐
+│        │
+│>       │
+│        │
+│        │
+│        │
+│A      <│
+│        │
+└────────┘
+Top de generacion 1200:
+Puntaje: 4345
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│     <  │
+└────────┘
+Top de generacion 1300:
+Puntaje: 5235
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│     >A │
+└────────┘
+Top de generacion 1400:
+Puntaje: 15990
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A   <  <│
+│>    <A │
+└────────┘
+Top de generacion 1500:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 1600:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 1700:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 1800:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 1900:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2000:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2100:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2200:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2300:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2400:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2500:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2600:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2700:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2800:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 2900:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3000:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3100:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3200:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3300:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3400:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3500:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3600:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3700:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3800:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 3900:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4000:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4100:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4200:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4300:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4400:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4500:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4600:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4700:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4800:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 4900:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+Top de generacion 5000:
+Puntaje: 16090
+┌Tablero:┐
+│        │
+│>    V  │
+│        │
+│        │
+│        │
+│A      <│
+│>    <A │
+└────────┘
+┌Tablero:┐
+│       C│
+│>    VZ │
+│Z       │
+│     Z  │
+│      Z │
+│A Z   Z<│
+│>Z   <A │
+└────────┘
+Generaciones: 5000 Duración: 602.3988411426544
+[0.10228943824768066, 0.45740699768066406, 13.802203178405762, 530.7220304012299] [18.91150736808777, 0.014622688293457031, 14.482962846755981, 602.3988411426544]
+[755, 2735, 5040, 16070] [-100, -100, 3585, 16090]
+┌─17:45:18 marcello (0) codigo [master]
+└$ 

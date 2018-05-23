@@ -3,7 +3,8 @@ import argparse
 import os
 #import a_estrella as ae
 import libreria as lib
-
+import matplotlib.pyplot as plt
+import time
 
 def usage():
     print("""Usage:
@@ -28,6 +29,8 @@ def getArgumentos():
     parser.add_argument('--abajo', action='store_true', dest="abajo")
     parser.add_argument('--individuos', nargs = 1, type = int, dest="individuos")
     parser.add_argument('--generaciones', nargs = 1, type = int, dest= "generaciones")
+
+    parser.add_argument('--benchmark', action = 'store_true', dest= "benchmark")
 
     #python main.py --tablero_inicial entrada.txt --a-estrella --vision 2 --zanahorias 5
     #python main.py --tablero_inicial entrada.txt --genetico --derecha --individuos 3 --generaciones 1000
@@ -75,15 +78,60 @@ def main():
 
         print("======= GENÉTICO =======")
         print("Se imprime el mejor individuo cada 100 generaciones.")
-        print(getGeneticTitle())
+        if args.benchmark == None:
+            print(getGeneticTitle())
+            solucion = lib.algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones)
+            print(solucion)
+        else:
+            tiemposIndividuos = []
+            tiemposGeneraciones = []
+            correctitudIndividuos = []
+            correctitudGeneraciones = []
+            valoresArbitrarios = [100,250,1000,5000]#,10000]
+            for i in valoresArbitrarios:
+                start = time.time()
+                solucion = lib.algoritmoGenetico(tableroInicial, direccionConejo, i, int(i*0.05))
+                end = time.time()
+                duracion = end-start
+                tiemposIndividuos.append(duracion)
+                correctitudIndividuos.append(solucion.puntaje)
+                print("Individuos:", i, "Duración:", duracion)
+            for i in valoresArbitrarios:
+                start = time.time()
+                solucion = lib.algoritmoGenetico(tableroInicial, direccionConejo, int(i*0.05), i)
+                end = time.time()
+                duracion = end-start
+                tiemposGeneraciones.append(duracion)
+                correctitudGeneraciones.append(solucion.puntaje)
+                print("Generaciones:", i, "Duración:", duracion)
+            print(tiemposIndividuos, tiemposGeneraciones)
+            print(correctitudIndividuos, correctitudGeneraciones)
 
+            plt.plot(valoresArbitrarios, tiemposIndividuos, '-bo')
+            plt.plot(valoresArbitrarios, tiemposGeneraciones, '-ro')
+            plt.axis([0, valoresArbitrarios[-1]*1.1, 0, high(tiemposIndividuos, tiemposGeneraciones)*1.1])
+            plt.xlabel('Ind (Azul) / Gen (Rojo)')
+            plt.ylabel('Duración (s)')
+            plt.show()
 
+            plt.plot(valoresArbitrarios, correctitudIndividuos, '-bo')
+            plt.plot(valoresArbitrarios, correctitudGeneraciones, '-ro')
+            plt.plot([-10]+valoresArbitrarios[1:-1]+[valoresArbitrarios[-1]*2], [0 for i in valoresArbitrarios], '-g')
+            plt.axis([0, valoresArbitrarios[-1]*1.1, minimum(correctitudIndividuos, correctitudGeneraciones), high(correctitudIndividuos, correctitudGeneraciones)*1.1])
+            plt.xlabel('Ind (Azul) / Gen (Rojo)')
+            plt.ylabel('Puntaje')
+            plt.show()
 
-
-        solucion = lib.algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones)
-        print(solucion)
     else:
         raise("Error en los comandos, agregue --a-estrella o --geneticos")
+
+
+def high(lista1, lista2):
+    return max(lista1[-1],lista2[-1])
+
+
+def minimum(lista1, lista2):
+    return min(lista1[0],lista2[0])
 
 
 def getStarTitle():

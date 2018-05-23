@@ -33,7 +33,7 @@ ARRIBA      = 'A'
 IZQUIERDA = '<'
 DERECHA      =  '>'
 ABAJO     =   'V'
-PUNTOSMIN = -99999
+PUNTOSMIN = -100
 paso  = 0
 direcciones = [ IZQUIERDA, DERECHA, ABAJO, ARRIBA ]
 problema = []
@@ -105,16 +105,6 @@ def calcularCosto(direccion):
 
 DIRECCION = ""
 GENERACION = 1
-
-exitFlag = 0
-
-class myThread (threading.Thread):
-   def __init__(self, threadID, name, counter):
-      threading.Thread.__init__(self)
-      self.threadID = threadID
-      self.name = name
-   def run(self):
-      pass
 
 class Individuo:
     # tablero solo tiene las flechas
@@ -496,7 +486,7 @@ def vaciarCarpetaDireccion():
             print(e)
 
 
-def buscarSolucion(direccion, tope, individuos):
+def buscarSolucion(direccion, tope, individuos, benchmark = False):
     global N
     global M
     N = len(problema)
@@ -540,12 +530,13 @@ def buscarSolucion(direccion, tope, individuos):
 
         poblacion = nuevaGeneracion
         GENERACION += 1
-        if GENERACION % 100 == 0:
-            print("Top de generacion", str(GENERACION) + ":")
-            print(poblacion[0])
+        if (not benchmark):
+            if GENERACION % 100 == 0:
+                print("Top de generacion", str(GENERACION) + ":")
+                print(poblacion[0])
         if ( GENERACION + 1 > tope ):
             break
-    print("Generaciones totales:", GENERACION)
+    #  print("Generaciones totales:", GENERACION)
     return poblacion[0]
 
 
@@ -557,7 +548,7 @@ def buscarSolucion(direccion, tope, individuos):
 # end = time.time()
 # print(end - start)
 
-def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones):
+def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones, benchmark = False):
     global problema
     problema = leerTablero(tableroInicial)
     direccion = {
@@ -566,9 +557,12 @@ def algoritmoGenetico(tableroInicial, direccionConejo, individuos, generaciones)
         2: ARRIBA,
         3: ABAJO
     }.get(direccionConejo, IZQUIERDA)
-    mejor = buscarSolucion(direccion, generaciones, individuos)
-    mezcla = mezclarTableroConDirecciones(problema, alistar(mejor.tablero), True)
-    print(imprimirTablero(mezcla))
+    if (not benchmark):
+        mejor = buscarSolucion(direccion, generaciones, individuos)
+        mezcla = mezclarTableroConDirecciones(problema, alistar(mejor.tablero), True)
+        print(imprimirTablero(mezcla))
+    else:
+        mejor = buscarSolucion(direccion, generaciones, individuos, True)
     return mejor
 
 
