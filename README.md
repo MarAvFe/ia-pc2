@@ -172,6 +172,8 @@ conjunto más grande de zanahorias, lo cuál le permitirían completar la cantid
 una menor cantidad de pasos.
 
 
+<div style="page-break-after: always;"></div>
+
 Algoritmo Genético
 ---
 
@@ -191,7 +193,7 @@ Un algoritmo genético provee un proceso de búsqueda de soluciones que se puede
 
 ```
 poblacion <-- generarPoblacion(n)
-for generaciones < num:
+for generaciones < maxGeneraciones:
 	for individuo in poblacion:
 		// Dar un valor numerico al individuo
 		individuo.puntaje <-- fitness(individuo)
@@ -236,14 +238,15 @@ Esta selección sesga los resultados de los cruces. Si se cruzan individuos con 
 El cruce es una acción que consiste en tomar los afortunados padres y obtener un nuevo individuo. Cada individuo se compone de una cantidad arbitraria de filas y columnas. El cruce consiste en tomar cada individuo de `n` filas, seleccionar un valor aleatorio `a`, tomar las filas previas al índice `a` de un individuo y unirlase con las filas posteriores al índice `a` del otro individuo.
 
 ```
-, , ,v, , \                    , , , , ,    ===>   , , ,v, ,
-, , , ,<,  \                   , ,>, ,v,    ===>   , , , ,<,
-, ,A, , ,   ---Indice 2---     , , , , ,    ===>   , ,A, , ,
-, ,<, ,>,                 \    , , , , ,v   ===>   , , , , ,v
-, , , , ,                  \   , , , , ,    ===>   , , , , ,
-, , , , ,                   \  ,<, ,<, ,    ===>   ,<, ,<, ,
-, , ,A, ,                    \ , ,A, , ,<   ===>   , ,A, , ,<
-
+┌Padre1:─┐                    ┌Padre2:─┐         ┌Hijo:───┐
+│    v   │\                   │        │   ===>  │     v  │
+│      < │ \                  │   >  v │   ===>  │      < │
+│  A     │  ---Indice 2---    │        │   ===>  │   A    │
+│  <   > │                \   │       v│   ===>  │       v│
+│        │                 \  │        │   ===>  │        │
+│        │                  \ │ <   <  │   ===>  │ <   <  │
+│    A   │                   \│   A   <│   ===>  │   A   <│
+└────────┘                    └────────┘         └────────┘
 ```
 
 El valor `a` puede ser desde `] 0, n-1 [` para evitar cruces inefectivos.
@@ -255,10 +258,10 @@ La mutación consiste en una modificación a un individuo sin ninguna razón apa
 Al algoritmo de mutación es sencillo: Según una función de probabilida, determina si el individuo será mutado 0, 1, 2 o hasta 3 veces. Esta función se efectúa calculando un número uniformemente aleatorio entre 0 y 1800 y luego se clasifica en cada uno de los botes con los siguientes pesos:
 
 ```
-- 0    - 49   : 2.7%    : Mutación 3 veces
-- 50   - 299  : 13.8%   : Mutación 2 veces
-- 300  - 999  : 38.8    : Mutación 1 vez
-- 1000 - 1799 : 44.4%   : Sin mutación
+- [0    - 49  ] : 2.7%    : Mutación 3 veces
+- [50   - 299 ] : 13.8%   : Mutación 2 veces
+- [300  - 999 ] : 38.8    : Mutación 1 vez
+- [1000 - 1799] : 44.4%   : Sin mutación
 ```
 
 Una vez determinado si se va a efectuar alguna mutación, se eligen 2 valores uniformemente aleatorios para utilizarse como fila y columna que sufrirá la mutación y se coloca una pieza aleatoria en ese espacio, dentro de las opciones de arriba, abajo, izquierda, derecha o vacío. De esta manera por medio de mutaciones se puede purgar el tablero de flechas innecesarias conforme pasen las generaciones.
@@ -283,9 +286,14 @@ Para completar el 35% restante de individuos para tener una nueva generación de
 
 ---
 
+<div style="page-break-after: always;"></div>
+
 ### Pruebas de rendimiento
 
 Se efectuaron algunas pruebas de rendimiento para el algoritmo genético, que evalúan la velocidad y correctitud de corridas con distintos valores de generaciones e individuos.
+
+
+![img/benchDuracion.png](img/benchDuracion.png)
 
 En la primera imagen se puede comparar la duración del algoritmo según el parámetro que se varíe.
 
@@ -293,10 +301,9 @@ El gráfico azul, representa la duración del algoritmo con 100, 250, 1000 y 500
 
 El gráfico rojo representa la duración del algoritmo con 100, 250, 1000 y 5000 generaciones, con una cantidad constante de individuos, del 5% de cada uno de estos valores; 5, 13, 50 y 250.
 
-![img/benchDuracion.png](img/benchDuracion.png)
+![img/benchPuntaje.png](img/benchPuntaje.png)
 
 En la segunda imagen se puede apreciar el puntaje obtenido por cada una de las corridas anteriores con los mismos valores propuestos. Note cómo con una población razonablemente grande o con una cantidad de generaciones razonablemente grande, se obtienen individuos muy aptos. Sin embargo, con muchos individuos y pocas generaciones (azul), se aproxima más rápidamente al individuo más apto, como es contrario para pocos individuos y muchas generaciones (rojo).
 
-![img/benchPuntaje.png](img/benchPuntaje.png)
 
-La linea verde inferior, grafica el cero. Esto señala que el puntaje para el gráfico rojo ni siquiera supera el cero para estas situaciones, lo cual significaría para el conejo que se mejor no ejecutar movimientos pues no va a obtener ningún resultado favorable con el individuo más apto de esta corrida.
+La linea verde inferior, grafica el cero. Esto señala que el puntaje para el gráfico rojo ni siquiera supera el cero para estas situaciones, lo cual significaría para el conejo que es mejor no ejecutar movimientos pues no va a obtener ningún resultado favorable con el individuo más apto de esta corrida.
