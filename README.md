@@ -1,3 +1,53 @@
+Proyecto Corto - 2
+===
+
+Este proyecto implementa dos algoritmos de búsqueda basados con el fin de averiguar el camino más corto para que un conejo pueda recoger una cantidad determinada de zanahorias en el caso del algoritmo A* o recoger la mayor cantidad de zanahorias posible de manera eficiente en el caso del algoritmo genético.
+
+## Cómo empezar
+
+Estas instrucciones detallan cómo conseguir una copia funcional del proyecto en una máquina local, para propósitos de desarollo y pruebas.
+
+Deberá de descargar el programa, en la siguiente dirección:
+```
+https://github.com/MarAvFe/ia-pc2
+```
+
+### Requisitos
+
+En esta sección del documento, se detallan los requisitos mínimos necesarios para poder ejecutar, de manera exitosa, el programa:
+
+### Instalación
+
+Para realizar la instalación de este proyecto, primero deberá de descargar el archivo tec-0.1.tar.gz; y posteriormente, deberá de ejecutar, en línea de comandos, la instrucción que se especifica a continuación:
+```bash
+$ # pip install tec-0.1.tar.gz -t <directorio>
+$ pip install tec-0.1.tar.gz -t ./revision/
+$
+```
+
+## Ejecución de pruebas
+
+A continuación se explica cómo se debe de ejecutar cada una de las pruebas de los modelos:
+
+
+- **A***
+```
+g04.py --tablero_inicial <direccion/archivo.txt> \
+	--a_estrella \
+	--vision <n> \
+	--zanahorias <n>
+```
+
+
+- **Genético**
+```
+g04.py --tablero_inicial <direccion/archivo.txt> \
+	--genetico \
+	[--derecha|--izquierda|--arriba|--abajo] \
+	--individuos <n> \
+	--generaciones <n>
+```
+
 Informe de resultados
 ===
 
