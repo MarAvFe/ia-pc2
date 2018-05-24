@@ -31,17 +31,21 @@ Por ejemplo, se tiene el siguiente tablero.
 
 El cuál representa únicamente la visión de 2 del conejo en un tablero de 25x25
 
+![img/fh1.png](img/fh1.png)
+
 Supongamos que queremos calcular la función de costo del lado arriba del conejo.
 
+![img/fh2.png](img/fh2.png)
 
 Entonces, se divide el tablero en 2, suponiendo que el conejo estuviera en el espacio que se está calculando.
 
+![img/fh3.png](img/fh3.png)
 
 Respecto a ese posible punto dónde el conejo podría moverse, se tiene que la zanahoria más cercana está a 2 pasos de distancia (cada paso es un 1). De ahí se obtiene el primer dato de la función heurística, el cual llamaremos ZanahoriaCerca = 2.
 
-
 Luego, contamos la diferencia de zanahorias del cuadrante a dónde se movería el conejo, respecto al tablero completo.
 
+![img/fh4.png](img/fh4.png)
 
 Se puede ver que el total de zanahorias es de 5. Y la cantidad de zanahorias que están en el cuadrante a dónde se movería el conejo es de 3. Así, 5 – 3 = 2. Cuyo dato llamaremos diferenciaZanahorias = 2
 
@@ -65,6 +69,11 @@ F(n) = 4
 
 
 Así, 4 sería el costo de mover el conejo a la casilla de arriba, tal y cómo muestra el programa.
+
+```
+PASO: 00001 IZQUIERDA: 5 DERECHA: 5 ARRIBA: 4 ABAJO: 4 MOVIMIENTO: ARRIBA
+```
+
 Es importante mencionar que, si 2 o más lados tienen el mismo costo, este se elegirá de manera
 aleatoria.
 
@@ -80,9 +89,25 @@ Para eso utilizaremos el siguiente tablero, de dimensiones 25x25 y una visión d
 
 ##### Tablero Total
 
+![img/tab11.png](img/tab11.png)
+
 ##### Tablero Visible
+![img/tab12.png](img/tab12.png)
 
 ##### Costos
+```
+PASO: 00001 IZQUIERDA: 5 DERECHA: 12 ARRIBA: 12 ABAJO: 6 MOVIMIENTO: IZQUIERDA
+PASO: 00002 IZQUIERDA: 8 DERECHA: 12 ARRIBA: 12 ABAJO: 6 MOVIMIENTO: ABAJO
+PASO: 00003 IZQUIERDA: 9 DERECHA: 13 ARRIBA: 12 ABAJO: 11 MOVIMIENTO: IZQUIERDA
+PASO: 00004 IZQUIERDA: 17 DERECHA: 15 ARRIBA: 15 ABAJO: 15 MOVIMIENTO: DERECHA
+PASO: 00005 IZQUIERDA: 20 DERECHA: 22 ARRIBA: 20 ABAJO: 19 MOVIMIENTO: ABAJO
+PASO: 00006 IZQUIERDA: 25 DERECHA: 27 ARRIBA: 25 ABAJO: 24 MOVIMIENTO: ABAJO
+PASO: 00007 IZQUIERDA: 30 DERECHA: 32 ARRIBA: 29 ABAJO: 29 MOVIMIENTO: ABAJO
+PASO: 00008 IZQUIERDA: 35 DERECHA: 36 ARRIBA: 35 ABAJO: 34 MOVIMIENTO: ABAJO
+PASO: 00009 IZQUIERDA: 41 DERECHA: 43 ARRIBA: 41 ABAJO: 40 MOVIMIENTO: ABAJO
+PASO: 00010 IZQUIERDA: 48 DERECHA: 51 ARRIBA: 49 ABAJO: 50 MOVIMIENTO: IZQUIERDA
+```
+![img/tab13.png](img/tab13.png)
 
 ##### Análisis
 En la corrida anterior, al conejo se le asigno una cantidad de zanahorias por comer de 3. Como se puede observar en los costos, fueron cambiando según caminaba el conejo. Además el conejo pasó por la zanahoria más cercana y luego decidió ir hacia abajo por la cantidad de zanahorias quehay en dicho lugar. Lo que le permitiría completar de manera más rápida las zanahorias solicitadas.
@@ -95,10 +120,25 @@ A continuación se hará un análisis con 3 zanahorias por comer, se verá la co
 
 ##### Tablero original
 
-##### Tablero visible
+![img/tab21.png](img/tab21.png)
+
+##### Tablero Visible
 Cantidad de zanahorias a comer = 3
 
+![img/tab22.png](img/tab22.png)
+
 ##### Costos
+```
+PASO: 00001 IZQUIERDA: 4 DERECHA: 8 ARRIBA: 5 ABAJO: 8 MOVIMIENTO: IZQUIERDA
+PASO: 00002 IZQUIERDA: 5 DERECHA: 7 ARRIBA: 5 ABAJO: 8 MOVIMIENTO: ARRIBA
+PASO: 00003 IZQUIERDA: 8 DERECHA: 10 ARRIBA: 7 ABAJO: 9 MOVIMIENTO: ARRIBA
+PASO: 00004 IZQUIERDA: 12 DERECHA: 12 ARRIBA: 9 ABAJO: 13 MOVIMIENTO: ARRIBA
+PASO: 00005 IZQUIERDA: 15 DERECHA: 15 ARRIBA: 12 ABAJO: 17 MOVIMIENTO: ARRIBA
+PASO: 00006 IZQUIERDA: 18 DERECHA: 18 ARRIBA: 23 ABAJO: 21 MOVIMIENTO: DERECHA
+PASO: 00007 IZQUIERDA: 24 DERECHA: 24 ARRIBA: 24 ABAJO: 26 MOVIMIENTO: DERECHA
+PASO: 00007 FINAL
+```
+![img/tab23.png](img/tab23.png)
 
 ##### Análisis
 Como se puede observar, el conejo tiene a la izquierda 2 zanahorias cercanas. En el primer paso parece que irá por ellas, sin embargo elige ese lado ya que a la izquierda tiene más peso debido al heurístico, que al dividir el tablero en 2 se da cuenta que hay más zanahorias del lado izquierdo. Luego el conejo se da cuenta que arriba hay más con las cuales completar las más rápido las zanahorias a comer y decide ir hasta arriba a comer el conjunto de zanahorias.
@@ -109,10 +149,21 @@ Como se puede observar, el conejo tiene a la izquierda 2 zanahorias cercanas. En
 
 ##### Tablero original
 
-##### Tablero visible
+![img/tab31.png](img/tab31.png)
+
+##### Tablero Visible
 Cantidad de zanahorias a comer = 3
 
+![img/tab32.png](img/tab32.png)
+
 ##### Costos
+```
+PASO: 00001 IZQUIERDA: 32 DERECHA: 32 ARRIBA: 32 ABAJO: 34 MOVIMIENTO: ARRIBA
+PASO: 00002 IZQUIERDA: 40 DERECHA: 33 ARRIBA: 35 ABAJO: 39 MOVIMIENTO: DERECHA
+PASO: 00003 IZQUIERDA: 39 DERECHA: 37 ARRIBA: 34 ABAJO: 41 MOVIMIENTO: ARRIBA
+PASO: 00004 IZQUIERDA: 40 DERECHA: 37 ARRIBA: 41 ABAJO: 40 MOVIMIENTO: DERECHA
+PASO: 00005 IZQUIERDA: 40 DERECHA: 45 ARRIBA: 43 ABAJO: 42 MOVIMIENTO: IZQUIERDA
+```
 
 ##### Análisis
 Como se puede observar, el conejo incluso conociendo que, en el primer movimiento, en la
