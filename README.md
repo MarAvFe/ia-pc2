@@ -172,7 +172,11 @@ Para efectuar la puntuación, se toma al individuo, se mezcla con el problema ob
 
 Una vez que se puntúa secuencialmente cada uno de los individuos, se ejecuta un ordenamiento por inserción, para colocar a los mejores individuos en las primeras posiciones del arreglo.
 
-Luego se eligen 2 padres aleatoriamente, basados en la distribución de probabilidad normal. Los valores obtenidos serán los índices del arreglo de la población. La campana gaussiana estará centrada en cero, el inicio del arreglo de la población; se le aplica un valor absoluto para utilizar los valores negativos y se da una varianza de la tercera parte del tamaño de la población. Así, en una población de 100 individuos, según la curva normal, se van a elegir con más probabilidad, los individuos con las puntuaciones en los lugares del 0 al ~30.
+Luego se eligen 2 padres aleatoriamente, basados en la distribución de probabilidad normal. Los valores obtenidos serán los índices del arreglo de la población. La campana gaussiana estará centrada en cero, el inicio del arreglo de la población; se le aplica un valor absoluto para utilizar los valores negativos y se da una varianza de la tercera parte (1/3) del tamaño de la población. Así, en una población de 100 individuos, según la curva normal, se van a elegir con más probabilidad, los individuos con las puntuaciones en los lugares del 0 al ~30.
+
+En la imagen se observa el comportamiento de la función gaussiana absoluta con la varianza correspondiente a una población de 200 individuos. El eje Y representa las repeticiones de un índice obtenido. Este ejemplo particular es con 10.000 elementos. En los casos que el índice supere la extensión de la población, se maneja con un módulo.
+
+![img/normalAbsCentrada.png](img/normalAbsCentrada.png)
 
 Esta selección sesga los resultados de los cruces. Si se cruzan individuos con una alta adaptabilidad, se puede llegar más rápidamente a una solución, sin embargo con menos generaciones se acerca a la solución pero se dejan de lado otros caminos promisorios. Este problema se ataca de una manera diferente más adelante.
 
@@ -181,13 +185,13 @@ Esta selección sesga los resultados de los cruces. Si se cruzan individuos con 
 El cruce es una acción que consiste en tomar los afortunados padres y obtener un nuevo individuo. Cada individuo se compone de una cantidad arbitraria de filas y columnas. El cruce consiste en tomar cada individuo de `n` filas, seleccionar un valor aleatorio `a`, tomar las filas previas al índice `a` de un individuo y unirlase con las filas posteriores al índice `a` del otro individuo.
 
 ```
-, , ,v, , \                    , , , , ,    ===   , , , , ,
-, , , ,<,  \                   , ,>, ,v,    ===   , ,>, ,v,
-, ,A, , ,   ---Indice 2---     , , , , ,    ===   , , , , ,
-, ,<, ,>,                 \    , , , , ,v   ===   , , , , ,v
-, , , , ,                  \   , , , , ,    ===   , , , , ,
-, , , , ,                   \  ,<, ,<, ,    ===   ,<, ,<, ,
-, , ,A, ,                    \ , ,A, , ,<   ===   , ,A, , ,<
+, , ,v, , \                    , , , , ,    ===>   , , ,v, ,
+, , , ,<,  \                   , ,>, ,v,    ===>   , , , ,<,
+, ,A, , ,   ---Indice 2---     , , , , ,    ===>   , ,A, , ,
+, ,<, ,>,                 \    , , , , ,v   ===>   , , , , ,v
+, , , , ,                  \   , , , , ,    ===>   , , , , ,
+, , , , ,                   \  ,<, ,<, ,    ===>   ,<, ,<, ,
+, , ,A, ,                    \ , ,A, , ,<   ===>   , ,A, , ,<
 
 ```
 
@@ -225,3 +229,23 @@ Luego del 5% inicial, se ejecutan cruces hasta satisfacer el total de 60% de ind
 #### Nuevos individuos
 
 Para completar el 35% restante de individuos para tener una nueva generación de la misma extensión que la pasada, se crean individuos nuevos en blanco para buscar nuevas y frescas soluciones al problema.
+
+---
+
+### Pruebas de rendimiento
+
+Se efectuaron algunas pruebas de rendimiento para el algoritmo genético, que evalúan la velocidad y correctitud de corridas con distintos valores de generaciones e individuos.
+
+En la primera imagen se puede comparar la duración del algoritmo según el parámetro que se varíe.
+
+El gráfico azul, representa la duración del algoritmo con 100, 250, 1000 y 5000 individuos, con una cantidad constante de generaciones del 5% de cada uno de estos valores; 5, 13, 50 y 250.
+
+El gráfico rojo representa la duración del algoritmo con 100, 250, 1000 y 5000 generaciones, con una cantidad constante de individuos, del 5% de cada uno de estos valores; 5, 13, 50 y 250.
+
+![img/benchDuracion.png](img/benchDuracion.png)
+
+En la segunda imagen se puede apreciar el puntaje obtenido por cada una de las corridas anteriores con los mismos valores propuestos. Note cómo con una población razonablemente grande o con una cantidad de generaciones razonablemente grande, se obtienen individuos muy aptos. Sin embargo, con muchos individuos y pocas generaciones (azul), se aproxima más rápidamente al individuo más apto, como es contrario para pocos individuos y muchas generaciones (rojo).
+
+![img/benchPuntaje.png](img/benchPuntaje.png)
+
+La linea verde inferior, grafica el cero. Esto señala que el puntaje para el gráfico rojo ni siquiera supera el cero para estas situaciones, lo cual significaría para el conejo que se mejor no ejecutar movimientos pues no va a obtener ningún resultado favorable con el individuo más apto de esta corrida.
